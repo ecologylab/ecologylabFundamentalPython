@@ -4,7 +4,6 @@ Created on 05.06.2012
 @author: cristi
 '''
 import unittest
-import tests.circle
 from tests.circle import *
 
 def run_test(ClassType):
