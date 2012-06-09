@@ -3,14 +3,14 @@ Created on 05.06.2012
 
 @author: cristi
 '''
-from serialization import SimplTypesScope
+from serialization import simpl_types_scope
 
-def getSerialization(obj, scope, format):
-    return scope.serialize(obj, format)
+def getSerialization(obj, scope, serializationFormat):
+    return scope.serialize(obj, serializationFormat)
 
-def getDeserialization(obj, scope, format):
-    serializedResult = getSerialization(obj, scope, format);
-    output = scope.deserialize(serializedResult, format)
+def getDeserialization(obj, scope, serializationFormat):
+    serializedResult = getSerialization(obj, scope, serializationFormat);
+    output = scope.deserialize(serializedResult, serializationFormat)
     return getSerialization(output, scope, "XML")
 
 def text_compare(t1, t2):
