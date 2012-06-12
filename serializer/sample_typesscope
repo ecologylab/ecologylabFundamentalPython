@@ -1,0 +1,30 @@
+{ "simpl_types_scope" : { "class_descriptor" : [ { "described_class" : "testpackage.EasyClass",
+            "described_class_package_name" : "testpackage",
+            "described_class_simple_name" : "EasyClass",
+            "field_descriptor" : [ { "declaring_class_descriptor" : { "simpl.ref" : "349610078" },
+                  "field" : "number",
+                  "field_type" : "int",
+                  "library_namespaces" : { "library_namespace" : [  ] },
+                  "name" : "number",
+                  "scalar_type" : "int",
+                  "tag_name" : "number",
+                  "type" : "18",
+                  "xml_hint" : "XML_ATTRIBUTE"
+                },
+                { "declaring_class_descriptor" : { "simpl.ref" : "349610078" },
+                  "field" : "name",
+                  "field_type" : "String",
+                  "library_namespaces" : { "library_namespace" : [  ] },
+                  "name" : "name",
+                  "scalar_type" : "String",
+                  "tag_name" : "name",
+                  "type" : "18",
+                  "xml_hint" : "XML_ATTRIBUTE"
+                }
+              ],
+            "name" : "testpackage.EasyClass",
+            "simpl.id" : "349610078",
+            "tag_name" : "easy_class"
+          } ],
+      "name" : "TestScope"
+    } }

@@ -3,7 +3,7 @@ Created on 05.06.2012
 
 @author: cristi
 '''
-from serialization import simpl_types_scope
+from serializer import simpl_types_scope
 
 def getSerialization(obj, scope, serializationFormat):
     return scope.serialize(obj, serializationFormat)
