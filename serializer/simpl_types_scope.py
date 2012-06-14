@@ -8,6 +8,7 @@ from deserializer import json_deserializer
 from deserializer.json_deserializer import deserialize_from_file
 from serializer.class_descriptor import ClassDescriptor
 from serializer.field_descriptor import FieldDescriptor
+from constants import format
 
 class SimplTypesScope(object):
     '''
@@ -30,8 +31,10 @@ class SimplTypesScope(object):
         for cd in root['class_descriptor']:
             self.parseRoot(cd)
         
-        for key, cd in self.classDescriptors:
-            for fd in cd.fieldDescriptors:
+        for cd_key in self.classDescriptors:
+            cd = self.classDescriptors[cd_key];
+            for fd_key in cd.fieldDescriptors:
+                fd = cd.fieldDescriptors[fd_key]
                 if 'simpl.ref' in fd.declaringClass:
                     fd.declaringClass = self.simplIdToTag[fd.declaringClass['simpl.ref']]
                     
@@ -39,7 +42,6 @@ class SimplTypesScope(object):
         print(cd)
         if 'simpl.id' in cd:
             classDescriptor = ClassDescriptor()
-            classDescriptor.describedClassName = cd['described_class']
             classDescriptor.tagName = cd['tag_name']
             classDescriptor.simpleName = cd['described_class_simple_name']
             classDescriptor.simplePackageName = cd['described_class_package_name']
@@ -74,6 +76,7 @@ class SimplTypesScope(object):
                 classDescriptor.fieldDescriptors[fieldDescriptor.tagName] = fieldDescriptor
                 
             self.classDescriptors[classDescriptor.tagName] = classDescriptor;
+            #print("AICI--> " + self.classDescriptors[classDescriptor.tagName].tagName)
             self.simplIdToTag[cd['simpl.id']] = classDescriptor.tagName
                 
         
