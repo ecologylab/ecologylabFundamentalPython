@@ -1,0 +1,50 @@
+{
+   "simpl_types_scope":{
+      "name":"TestScope",
+      "class_descriptor":[
+         {
+            "simpl.id":"14978587",
+            "name":"mytests.EasyClass",
+            "tag_name":"easy_class",
+            "described_class_simple_name":"EasyClass",
+            "described_class_package_name":"mytests",
+            "field_descriptor":[
+               {
+                  "name":"number",
+                  "tag_name":"number",
+                  "field":"number",
+                  "type":"18",
+                  "scalar_type":"int",
+                  "xml_hint":"XML_ATTRIBUTE",
+                  "field_type":"int",
+                  "declaring_class_descriptor":{
+                     "simpl.ref":"14978587"
+                  },
+                  "library_namespaces":{
+                     "library_namespace":[
+
+                     ]
+                  }
+               },
+               {
+                  "name":"name",
+                  "tag_name":"name",
+                  "field":"name",
+                  "type":"18",
+                  "scalar_type":"String",
+                  "xml_hint":"XML_ATTRIBUTE",
+                  "field_type":"String",
+                  "declaring_class_descriptor":{
+                     "simpl.ref":"14978587"
+                  },
+                  "library_namespaces":{
+                     "library_namespace":[
+
+                     ]
+                  }
+               }
+            ]
+         }
+      ]
+   }
+}

@@ -62,8 +62,10 @@ class SimplTypesScope(object):
                 
                 if 'scalar_type' in fd:
                     fieldDescriptor.scalarType = fd['scalar_type']
+                    fieldDescriptor.simplType = "scalar"
                 else: # to see other types, like collections
                     if 'composite_tag_name' in fd:
+                        fieldDescriptor.simplType = "composite"
                         fieldDescriptor.compositeTagName = fd['composite_tag_name']
                         fieldDescriptor.elementClass = fd['element_class']
                         elementClassDescriptor = fd['element_class_descriptor']
@@ -76,7 +78,6 @@ class SimplTypesScope(object):
                 classDescriptor.fieldDescriptors[fieldDescriptor.tagName] = fieldDescriptor
                 
             self.classDescriptors[classDescriptor.tagName] = classDescriptor;
-            #print("AICI--> " + self.classDescriptors[classDescriptor.tagName].tagName)
             self.simplIdToTag[cd['simpl.id']] = classDescriptor.tagName
                 
         
