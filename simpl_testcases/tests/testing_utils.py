@@ -4,6 +4,7 @@ Created on 05.06.2012
 @author: cristi
 '''
 from serializer import simpl_types_scope
+from xml.etree.ElementTree import Element, ElementTree
 
 def getSerialization(obj, scope, serializationFormat):
     return scope.serialize(obj, serializationFormat)
@@ -33,8 +34,8 @@ def xml_compare(x1, x2, reporter=None):
         return False
     if not text_compare(x1.tail, x2.tail):
         return False
-    cl1 = x1.getchildren()
-    cl2 = x2.getchildren()
+    cl1 = list(x1)
+    cl2 = list(x2)
     if len(cl1) != len(cl2):
         return False
     i = 0
