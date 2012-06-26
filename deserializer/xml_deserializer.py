@@ -13,7 +13,7 @@ def deserialize_from_scope(scope):
 def createClass(class_name):
     if class_name in globals():
         return globals()[class_name]
-    newClass = type(class_name, (object,), {})
+    newClass = type(str(class_name), (object,), {})
     globals()[class_name] = newClass
     return newClass
 
