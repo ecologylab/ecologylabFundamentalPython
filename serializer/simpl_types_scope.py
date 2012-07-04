@@ -8,7 +8,7 @@ from deserializer.json_deserializer import *
 from serializer.class_descriptor import ClassDescriptor
 from serializer.field_descriptor import FieldDescriptor
 from constants import format
-from xml.sax import make_parser, ContentHandler
+from xml.sax import make_parser
 from serializer.xml_serializer import XmlSimplSerializer
 from deserializer.xml_deserializer import SimplHandler
 class SimplTypesScope(object):
@@ -93,18 +93,27 @@ class SimplTypesScope(object):
     
     
     def serialize(self, obj, serialization_format):
-        if (serialization_format == "XML"):
+        if serialization_format == "XML":
             xmlserializer = XmlSimplSerializer(obj, self)
             return xmlserializer.serialize()
-        
+        if serialization_format == "JSON":
+            serializer = JSONSimplSerializer(new_instance, scope)
+            return serializer.serialize()
+            
+            
     def deserialize(self, input_file, serialization_format):
-        if (serialization_format == "XML"):
+        if serialization_format == "XML":
             xmlsax_handler = SimplHandler(self);
             parser = make_parser();
             parser.setContentHandler(xmlsax_handler)
             parser.parse(input_file)
             return xmlsax_handler.instance
-        
+        if serialization_format == "JSON":
+            json_tree = deserialize_from_file(input_file)
+            json_des = SimplJsonDeserializer(self, json_tree)
+            json_des.start_deserialize()
+            return json_des.instance
+            
     @classmethod
     def enableGraphSerialization():
         pass
