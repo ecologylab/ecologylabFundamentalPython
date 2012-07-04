@@ -21,12 +21,16 @@ if False:
     if ('b' in getattr(dum)):
         print("ok")
         
-scope = SimplTypesScope("JSON", "scope_test")
-json_tree = deserialize_from_file("example.json")
-json_des = SimplJsonDeserializer(scope, json_tree)
-json_des.start_deserialize()
-new_instance = json_des.instance
-serializer = JSONSimplSerializer(new_instance, scope)
-serializer.serialize()
-print(serializer.toString())
-#print (globals())
+    scope = SimplTypesScope("JSON", "scope_test")
+    json_tree = deserialize_from_file("example.json")
+    json_des = SimplJsonDeserializer(scope, json_tree)
+    json_des.start_deserialize()
+    new_instance = json_des.instance
+    serializer = JSONSimplSerializer(new_instance, scope)
+    serializer.serialize()
+    print(serializer.toString())
+    
+x = json.loads("""{"circle":{"radius":"3","center":{"x":"2","y":"1"}}}""")
+
+y = json.loads("""{"circle":{"center":{"x":"2","y":"1"}, "radius":"3"}}""")
+print (x==y)

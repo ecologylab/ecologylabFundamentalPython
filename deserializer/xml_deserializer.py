@@ -42,6 +42,7 @@ class SimplHandler(ContentHandler):
             self.parent_instance = self.current_instance
         else:
             field = self.scope.classDescriptors[self.parent_instance.simpl_tag_name].fieldDescriptors[name]
+            field_name = name
             if hasattr(field, "xml_hint"):
                 self.current_xml_leaf = field_name
             else:
