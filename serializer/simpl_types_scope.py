@@ -10,6 +10,7 @@ from serializer.field_descriptor import FieldDescriptor
 from constants import format
 from xml.sax import make_parser
 from serializer.xml_serializer import XmlSimplSerializer
+from serializer.json_serializer import *
 from deserializer.xml_deserializer import SimplHandler
 class SimplTypesScope(object):
     '''
@@ -97,7 +98,7 @@ class SimplTypesScope(object):
             xmlserializer = XmlSimplSerializer(obj, self)
             return xmlserializer.serialize()
         if serialization_format == "JSON":
-            serializer = JSONSimplSerializer(new_instance, scope)
+            serializer = JSONSimplSerializer(obj, self)
             return serializer.serialize()
             
             
