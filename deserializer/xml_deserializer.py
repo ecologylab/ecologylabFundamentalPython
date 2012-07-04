@@ -6,14 +6,12 @@ Created on 16.06.2012
 from xml.sax import ContentHandler, make_parser
 #from serializer.simpl_types_scope import SimplTypesScope
 from serializer.xml_serializer import prettify, XmlSimplSerializer
-
-def deserialize_from_scope(scope):
-    pass
+from deserializer.deserializer_utils import *
 
 def createClass(class_name):
     if class_name in globals():
         return globals()[class_name]
-    newClass = type(str(class_name), (object,), {})
+    newClass = type(class_name, (object,), {})
     globals()[class_name] = newClass
     return newClass
 
@@ -44,7 +42,6 @@ class SimplHandler(ContentHandler):
             self.parent_instance = self.current_instance
         else:
             field = self.scope.classDescriptors[self.parent_instance.simpl_tag_name].fieldDescriptors[name]
-            field_name = field.name
             if hasattr(field, "xml_hint"):
                 self.current_xml_leaf = field_name
             else:
