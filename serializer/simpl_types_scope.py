@@ -4,7 +4,7 @@ Created on 04.06.2012
 @author: cristi
 '''
 
-from deserializer.json_deserializer import deserialize_from_file
+from deserializer.json_deserializer import *
 from serializer.class_descriptor import ClassDescriptor
 from serializer.field_descriptor import FieldDescriptor
 from constants import format

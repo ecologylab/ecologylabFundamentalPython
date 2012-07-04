@@ -21,7 +21,6 @@ class XmlSimplSerializer:
         self.top = None
     
     def serialize(self):
-        obj = self.simpl_object
         self.top = self.serializeInDepth(self.simpl_object, self.simpl_object.simpl_tag_name)
         return self.top
 
