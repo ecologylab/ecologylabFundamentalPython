@@ -8,8 +8,6 @@ from serializer.simpl_types_scope import SimplTypesScope
 from serializer.xml_serializer import prettify, XmlSimplSerializer
 from simpl_testcases.tests import testing_utils
 from deserializer.json_deserializer import deserialize_from_file
-from deserializer.xml_deserializer import SimplHandler
-from xml.sax import make_parser, ContentHandler
 from simpl_testcases.tests import testing_utils
 from xml.etree import ElementTree
 from xml.etree.ElementTree import tostring

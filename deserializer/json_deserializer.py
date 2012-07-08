@@ -15,6 +15,7 @@ def deserialize_from_file(filename):
     json_file = open(filename, "r")
     data_string = json_file.read()
     scope = deserialize_from_string(data_string)
+    json_file.close()
     return scope
 
 class SimplJsonDeserializer:
@@ -37,11 +38,18 @@ class SimplJsonDeserializer:
         if len(attrs) > 0:
             for key, value in attrs.items():
                 fd = class_descriptor.fieldDescriptors[key];
-                if (fd.simpl_type == "scalar"):
+                if fd.simpl_type == "scalar":
                     print("just set attr " + fd.name + ", with the value " + value)
                     setattr(new_instance, fd.name, value)
-                else:
-                    child_tag_name = self.scope.findClassBySimplName(fd.field_type)
-                    setattr(new_instance, key, self.deserialize(child_tag_name, value))          
+                if fd.simpl_type == "composite":
+                    child_tag_name = self.scope.findClassByFullName(fd.element_class)
+                    setattr(new_instance, fd.name, self.deserialize(child_tag_name, value))
+                if fd.simpl_type == "collection":
+                    current_list = []
+                    child_tag_name = self.scope.findClassByFullName(fd.element_class)
+                    members = value[fd.collection_tag_name]
+                    for member in members:
+                        current_list.append(self.deserialize(child_tag_name, member))
+                    setattr(new_instance, fd.name, current_list)
         return new_instance
 

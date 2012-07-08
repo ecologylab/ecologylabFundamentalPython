@@ -32,7 +32,7 @@ class XmlSimplSerializer:
         for fd_key in class_descriptor.fieldDescriptors:
             fd = class_descriptor.fieldDescriptors[fd_key]
             if hasattr(simpl_object, fd.name):
-                if (fd.simpl_type == "scalar"):
+                if fd.simpl_type == "scalar":
                     if (hasattr(fd, "xml_hint")):
                         if (fd.xml_hint == "XML_LEAF"):
                             child = Element(fd.tagName)
@@ -42,8 +42,15 @@ class XmlSimplSerializer:
                             xml_element.set(fd.tagName, getattr(simpl_object, fd.name))
                     else:
                         xml_element.set(fd.tagName, getattr(simpl_object, fd.name))
-                else:
+                elif fd.simpl_type == "composite":
                     xml_element.append(self.serializeInDepth(getattr(simpl_object, fd.name), fd.name))
+                elif fd.simpl_type == "collection":
+                    if hasattr(simpl_object, fd.name):
+                        collection_list = getattr(simpl_object, fd.name)
+                        for item in collection_list:
+                            xml_element.append(self.serializeInDepth(item, fd.collection_tag_name))
+
+        
         return xml_element
     
     def toString(self):

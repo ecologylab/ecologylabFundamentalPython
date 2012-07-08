@@ -8,10 +8,10 @@ from deserializer.json_deserializer import *
 from serializer.class_descriptor import ClassDescriptor
 from serializer.field_descriptor import FieldDescriptor
 from constants import format
-from xml.sax import make_parser
 from serializer.xml_serializer import XmlSimplSerializer
 from serializer.json_serializer import *
-from deserializer.xml_deserializer import SimplHandler
+from deserializer.xml_deserializer import *
+
 class SimplTypesScope(object):
     '''
     classdocs
@@ -37,13 +37,14 @@ class SimplTypesScope(object):
             cd = self.classDescriptors[cd_key];
             for fd_key in cd.fieldDescriptors:
                 fd = cd.fieldDescriptors[fd_key]
-                if 'simpl.ref' in fd.declaringClass:
-                    fd.declaringClass = self.simplIdToTag[fd.declaringClass['simpl.ref']]
+                if 'simpl.ref' in fd.declaring_class:
+                    fd.declaring_class = self.simplIdToTag[fd.declaring_class['simpl.ref']]
                     
     def parseRoot(self, cd):
         print(cd)
         if 'simpl.id' in cd:
             classDescriptor = ClassDescriptor()
+            classDescriptor.name = cd['name']
             classDescriptor.tagName = cd['tag_name']
             classDescriptor.simpl_name = cd['described_class_simple_name']
             classDescriptor.simplePackageName = cd['described_class_package_name']
@@ -55,13 +56,15 @@ class SimplTypesScope(object):
                 fieldDescriptor.type = fd['type']
                 fieldDescriptor.field = fd['field']
                 fieldDescriptor.field_type = fd['field_type']
+                fieldDescriptor.libraryNamespaces = fd['library_namespaces']
+                if 'element_class' in fd:
+                    fieldDescriptor.element_class = fd['element_class']
                 declaringClass = fd['declaring_class_descriptor']
                 if 'simpl_id' in declaringClass:
-                    fieldDescriptor.declaringClass = declaringClass['tag_name'] #dictionary or simple element?
+                    fieldDescriptor.declaring_class = declaringClass['tag_name'] #dictionary or simple element?
                     self.parseRoot(declaringClass)
                 else:
-                    fieldDescriptor.declaringClass = declaringClass # to be replaced with the tag_name after parsing the whole SerializedScope 
-                
+                    fieldDescriptor.declaring_class = declaringClass # to be replaced with the tag_name after parsing the whole SerializedScope 
                 if 'scalar_type' in fd:
                     fieldDescriptor.scalar_type = fd['scalar_type']
                     fieldDescriptor.simpl_type = "scalar"
@@ -69,25 +72,38 @@ class SimplTypesScope(object):
                     if 'composite_tag_name' in fd:
                         fieldDescriptor.simpl_type = "composite"
                         fieldDescriptor.composite_tagame = fd['composite_tag_name']
-                        fieldDescriptor.element_class = fd['element_class']
                         elementClassDescriptor = fd['element_class_descriptor']
                         if 'simpl.id' in elementClassDescriptor:
                             self.parseRoot(elementClassDescriptor)
-                fieldDescriptor.libraryNamespaces = fd['library_namespaces']
+                    if 'collection_type' in fd:
+                        fieldDescriptor.simpl_type = "collection"
+                        if 'wrapped' in fd:
+                            fieldDescriptor.wrapped = True
+                        else:
+                            fieldDescriptor.wrapped = False
+                        fieldDescriptor.is_generic = fd['is_generic']
+                        fieldDescriptor.collection_tag_name = fd['collection_or_map_tag_name']
+                        elementClassDescriptor = fd['element_class_descriptor']
+                        if 'simpl.id' in elementClassDescriptor:
+                            self.parseRoot(elementClassDescriptor)
+                    
                 if 'xml_hint' in fd:
                     fieldDescriptor.xml_hint = fd['xml_hint']
                 
                 classDescriptor.fieldDescriptors[fieldDescriptor.tagName] = fieldDescriptor
                 
+                #collectionFieldDescriptors describe only nowrap collection members
+                if fieldDescriptor.simpl_type == 'collection':
+                    classDescriptor.collectionFieldDescriptors[fieldDescriptor.collection_tag_name] = fieldDescriptor
             self.classDescriptors[classDescriptor.tagName] = classDescriptor;
             self.simplIdToTag[cd['simpl.id']] = classDescriptor.tagName
-               
-    def findClassBySimplName(self, simpl_name):
+
+            
+    def findClassByFullName(self, name):
         for cd_key in self.classDescriptors:
             cd = self.classDescriptors[cd_key];
-            if (cd.simpl_name == simpl_name):
-                return cd.tagName
-         
+            if (cd.name == name):
+                return cd.tagName  
         
     def initializeFromXML(self, serializedScope):
         pass
@@ -104,11 +120,11 @@ class SimplTypesScope(object):
             
     def deserialize(self, input_file, serialization_format):
         if serialization_format == "XML":
-            xmlsax_handler = SimplHandler(self);
-            parser = make_parser();
-            parser.setContentHandler(xmlsax_handler)
-            parser.parse(input_file)
-            return xmlsax_handler.instance
+            xml_tree = deserialize_xml_from_file(input_file)
+            xml_deserializer = SimplXmlDeserializer(self, xml_tree)
+            xml_deserializer.start_deserialize()
+            return xml_deserializer.instance
+        
         if serialization_format == "JSON":
             json_tree = deserialize_from_file(input_file)
             json_des = SimplJsonDeserializer(self, json_tree)
@@ -121,7 +137,7 @@ class SimplTypesScope(object):
     
 if __name__ == '__main__':
     
-    scope = SimplTypesScope("JSON", "sample_typesscope3")
+    scope = SimplTypesScope("JSON", "sample_typesscope")
     print(scope.classDescriptors)
     
     print(scope.simplIdToTag)

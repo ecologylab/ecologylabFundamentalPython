@@ -14,20 +14,27 @@ class JSONSimplSerializer:
     
     def serialize(self):
         self.top = dict()
-        self.top[self.simpl_object.simpl_tag_name] = [self.serializeInDepth(self.simpl_object, self.simpl_object.simpl_tag_name)]
+        self.top[self.simpl_object.simpl_tag_name] = self.serializeInDepth(self.simpl_object)
         return self.top
 
-    def serializeInDepth(self, simpl_object, simpl_name):
+    def serializeInDepth(self, simpl_object):
         tag_name = simpl_object.simpl_tag_name
         class_descriptor = self.scope.classDescriptors[tag_name]
         new_dict = dict()
         for fd_key in class_descriptor.fieldDescriptors:
             fd = class_descriptor.fieldDescriptors[fd_key]
             if hasattr(simpl_object, fd.name):
-                if (fd.simpl_type == "scalar"):
+                if fd.simpl_type == "scalar":
                     new_dict[fd.tagName] = getattr(simpl_object, fd.name)
-                else:
-                    new_dict[fd.tagName] = self.serializeInDepth(getattr(simpl_object, fd.name), fd.name)
+                if fd.simpl_type == "composite":
+                    new_dict[fd.tagName] = self.serializeInDepth(getattr(simpl_object, fd.name))
+                if fd.simpl_type == "collection":
+                    collection_dict = dict()
+                    collection_dict[fd.collection_tag_name] = []
+                    children = getattr(simpl_object, fd.name)
+                    for child in children:
+                        collection_dict[fd.collection_tag_name].append(self.serializeInDepth(child))
+                    new_dict[fd.tagName] = collection_dict
         return new_dict
     
     def toString(self):
