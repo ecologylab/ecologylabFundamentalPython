@@ -21,23 +21,24 @@ class SimplXmlDeserializer:
         self.scope = scope
         self.pull_events = pull_events
         self.instance = None
-        self.stack = None
+        self.stack = []
         self.is_collection_member = None
         self.is_composite = None
-        self.current_collection
+        self.current_collection = None
         
     def deserialize(self):
         for (event, node) in self.pull_events:
-            pullEvent(event, nodes)
+            self.pullEvent(event, node)
         
     def pullEvent(self, event, node):
         if event == pulldom.START_ELEMENT:
             name = node.tagName
             attribs = node.attributes
-            stack.append(newInstance(name, attribs))
+            self.stack.append(self.newInstance(name, attribs))
+            if self.instance == None:
+                self.instance = self.stack[0] 
             
-            
-    def newInstance(self, name, attribs):
+    def newInstance(self, name, attrs):
         class_descriptor = self.scope.classDescriptors[name]
         class_name = class_descriptor.simpl_name
         self.simpl_class = createClass(class_name)
@@ -51,7 +52,7 @@ class SimplXmlDeserializer:
                     setattr(new_instance, fd.name, value)
 if False:  
     def deserialize_xml_from_string(string):
-    return ElementTree.fromstring(string)
+        return ElementTree.fromstring(string)
     
     def deserialize_xml_from_file(filename):
         xml_file = open(filename, "r")

@@ -9,7 +9,7 @@ from deserializer.json_deserializer import *
 from serializer.json_serializer import JSONSimplSerializer
 from xml.sax import make_parser
 from xml.etree import ElementTree
-from deserializer.xml_deserializer import SimplXmlDeserializer, deserialize_xml_from_file 
+from deserializer.xml_deserializer import get_parser_from_file, SimplXmlDeserializer
 
 if False:
     def createClass():
@@ -57,10 +57,17 @@ if False:
     parser.setContentHandler(xmlsax_handler)
     parser.parse("example.xml")
     
+    scope = SimplTypesScope("JSON", "scope_test")
+    xml_tree = deserialize_xml_from_file("example.xml")
+    xml_deserializer = SimplXmlDeserializer(scope, xml_tree)
+    xml_deserializer.start_deserialize()
+    obj = xml_deserializer.instance
+    xmlserializer = XmlSimplSerializer(obj, scope)
+    print(prettify(xmlserializer.serialize()))
+    
 scope = SimplTypesScope("JSON", "scope_test")
-xml_tree = deserialize_xml_from_file("example.xml")
-xml_deserializer = SimplXmlDeserializer(scope, xml_tree)
-xml_deserializer.start_deserialize()
+xml_events = get_parser_from_file("example.xml")
+xml_deserializer = SimplXmlDeserializer(scope, xml_events)
+xml_deserializer.deserialize()
 obj = xml_deserializer.instance
-xmlserializer = XmlSimplSerializer(obj, scope)
-print(prettify(xmlserializer.serialize()))
+
