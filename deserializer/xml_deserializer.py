@@ -25,6 +25,7 @@ class SimplXmlDeserializer:
         self.is_collection_member = None
         self.is_composite = None
         self.current_collection = None
+        self.is_xml_leaf = None
         
     def deserialize(self):
         for (event, node) in self.pull_events:
@@ -37,6 +38,12 @@ class SimplXmlDeserializer:
             self.stack.append(self.newInstance(name, attribs))
             if self.instance == None:
                 self.instance = self.stack[0] 
+        
+        if event == pulldom.END_ELEMENT:
+            self.stack.pop()
+            
+        if event == pulldom.CHARACTERS:
+            pass
             
     def newInstance(self, name, attrs):
         class_descriptor = self.scope.classDescriptors[name]
