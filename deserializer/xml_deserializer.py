@@ -27,11 +27,11 @@ class SimplXmlDeserializer:
         self.current_collection = None
         self.is_xml_leaf = None
         
-    def deserialize(self):
+    def parse(self):
         for (event, node) in self.pull_events:
-            self.pullEvent(event, node)
+            self.nextEvent(event, node)
         
-    def pullEvent(self, event, node):
+    def nextEvent(self, event, node):
         if event == pulldom.START_ELEMENT:
             name = node.tagName
             attribs = node.attributes
@@ -57,6 +57,26 @@ class SimplXmlDeserializer:
                 if fd.simpl_type == "scalar":
                     print("just set attr " + fd.name + ", with the value " + value)
                     setattr(new_instance, fd.name, value)
+                    
+    def deserializeScalar(self, parent, field_descriptor):
+        pass
+    
+    def deserializeComposite(self, parent, field_descriptor):
+        pass
+    
+    def deserializeCompositeCollection(self, parent, field_descriptor):
+        pass
+    
+    def deserializeCompositeMap(self, parent, field_descriptor):
+        pass
+    
+    def getSimplReference(self):
+        pass
+
+    def getTagName(self):
+        pass
+    
+    
 if False:  
     def deserialize_xml_from_string(string):
         return ElementTree.fromstring(string)

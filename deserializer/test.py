@@ -68,6 +68,6 @@ if False:
 scope = SimplTypesScope("JSON", "scope_test")
 xml_events = get_parser_from_file("example.xml")
 xml_deserializer = SimplXmlDeserializer(scope, xml_events)
-xml_deserializer.deserialize()
+xml_deserializer.parse()
 obj = xml_deserializer.instance
 
