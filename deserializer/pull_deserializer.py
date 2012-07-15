@@ -3,7 +3,10 @@ Created on 14.07.2012
 
 @author: cristi
 '''
+from deserializer import field_type, deserialization_procedure_state
 
+from deserializer.field_type import FieldType
+from deserializer.deserialization_procedure_state import DeserializationState
 
 class PullDeserializer(object):
     def __init__(self, scope, input_file):
@@ -29,5 +32,10 @@ class PullDeserializer(object):
     def getDeserializer(self):
         pass
     
-    def nextDeserializationProcedureStare(self, field_type):
-        pass
+    def nextDeserializationProcedureStare(self, state, field_type):
+        if field_type == FieldType.SCALAR:
+            if state == DeserializationState.INIT:
+                return DeserializationState.ATTRIBUTES
+        if state == DeserializationState.INIT or state == DeserializationState.ATTRIBUTES:
+            return DeserializationState.ATTRIBUTES_DONE
+        
