@@ -6,6 +6,7 @@ Created on 16.06.2012
 from xml.sax import ContentHandler, make_parser
 from serializer.xml_serializer import prettify, XmlSimplSerializer
 from deserializer.deserializer_utils import *
+from deserializer.pull_deserializer import PullDeserializer
 
 from xml.etree import ElementTree
 from xml.dom import pulldom
@@ -16,33 +17,39 @@ def get_parser_from_file(filename):
     xml_file = open(filename, "r")
     return pulldom.parse(xml_file)
     
-class SimplXmlDeserializer:
-    def __init__(self, scope, pull_events):
+class SimplXmlDeserializer(PullDeserializer):
+    def __init__(self, scope, input_file):
+        super().__init__(scope, input_file)      
         self.scope = scope
-        self.pull_events = pull_events
-        self.instance = None
+        self.root = None
         self.stack = []
         self.is_collection_member = None
         self.is_composite = None
         self.current_collection = None
         self.is_xml_leaf = None
-        
+        self.current_event = None
+        try:
+            self.pull_events = get_parser_from_file(input_file)
+        except IOError as e:
+            print ("Cannot read from file: " + e.strerror)
+            
     def parse(self):
         for (event, node) in self.pull_events:
-            self.nextEvent(event, node)
+            self.current_event = event
+            self.nextEvent(node)
         
-    def nextEvent(self, event, node):
-        if event == pulldom.START_ELEMENT:
+    def nextEvent(self, node):
+        if self.current_event == pulldom.START_ELEMENT:
             name = node.tagName
             attribs = node.attributes
             self.stack.append(self.newInstance(name, attribs))
-            if self.instance == None:
-                self.instance = self.stack[0] 
+            if self.root == None:
+                self.root = self.stack[0] 
         
-        if event == pulldom.END_ELEMENT:
+        if self.current_event == pulldom.END_ELEMENT:
             self.stack.pop()
             
-        if event == pulldom.CHARACTERS:
+        if self.current_event == pulldom.CHARACTERS:
             pass
             
     def newInstance(self, name, attrs):
@@ -58,6 +65,9 @@ class SimplXmlDeserializer:
                     print("just set attr " + fd.name + ", with the value " + value)
                     setattr(new_instance, fd.name, value)
                     
+    def deserializeAttributes(self):
+        pass
+        
     def deserializeScalar(self, parent, field_descriptor):
         pass
     
@@ -73,8 +83,12 @@ class SimplXmlDeserializer:
     def getSimplReference(self):
         pass
 
-    def getTagName(self):
-        pass
+    def getTagName(self, node):
+        if node.prefix != None and node.prefix != "":
+            return node.prefix + ":" + node.localName
+        else:
+            return node.localName
+        
     
     
 if False:  
