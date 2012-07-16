@@ -28,17 +28,29 @@ class SimplXmlDeserializer(PullDeserializer):
         self.current_collection = None
         self.is_xml_leaf = None
         self.current_event = None
+        self.current_node = None
         try:
             self.pull_events = get_parser_from_file(input_file)
+            self.event_iter = iter(self.pull_events)
         except IOError as e:
             print ("Cannot read from file: " + e.strerror)
             
+    def nextEvent(self):
+        while True:
+            self.current_event, self.current_node = next(self.event_iter)
+            if self.current_event == pulldom.START_DOCUMENT or \
+                self.current_event == pulldom.START_ELEMENT or \
+                self.current_event == pulldom.END_ELEMENT or \
+                self.current_event == pulldom.END_DOCUMENT or \
+                self.current_event == pulldom.CHARACTERS:
+                break
+    
     def parse(self):
-        for (event, node) in self.pull_events:
-            self.current_event = event
-            self.nextEvent(node)
+        self.nextEvent() 
+        rootTag = self.getTagName(self.current_node)
+        root = self.newInstance(rootTag, self.current_node.attributes)
         
-    def nextEvent(self, node):
+    def deserialize(self, node):
         if self.current_event == pulldom.START_ELEMENT:
             name = node.tagName
             attribs = node.attributes
@@ -61,7 +73,7 @@ class SimplXmlDeserializer(PullDeserializer):
         if len(attrs) > 0:
             for key, value in attrs.items():
                 fd = class_descriptor.fieldDescriptors[key];
-                if fd.simpl_type == "scalar":
+                if fd.isScalarTag():
                     print("just set attr " + fd.name + ", with the value " + value)
                     setattr(new_instance, fd.name, value)
                     
