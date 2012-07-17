@@ -10,16 +10,16 @@ from deserializer.pull_deserializer import PullDeserializer
 
 from xml.etree import ElementTree
 from xml.dom import pulldom
-
+from deserializer.field_type import FieldType
 
 
 def get_parser_from_file(filename):
     xml_file = open(filename, "r")
     return pulldom.parse(xml_file)
-    
+
 class SimplXmlDeserializer(PullDeserializer):
-    def __init__(self, scope, input_file):
-        super().__init__(scope, input_file)      
+    def __init__(self, scope, input_file, deserializationHookStrategy = None):
+        super().__init__(scope, input_file)
         self.scope = scope
         self.root = None
         self.stack = []
@@ -29,84 +29,108 @@ class SimplXmlDeserializer(PullDeserializer):
         self.is_xml_leaf = None
         self.current_event = None
         self.current_node = None
+        self.current_field_descriptor = None
+        self.deserializationHookStrategy = deserializationHookStrategy
         try:
             self.pull_events = get_parser_from_file(input_file)
-            self.event_iter = iter(self.pull_events)
         except IOError as e:
             print ("Cannot read from file: " + e.strerror)
-            
+
     def nextEvent(self):
         while True:
-            self.current_event, self.current_node = next(self.event_iter)
+            self.current_event, self.current_node = self.pull_events.getEvent()
             if self.current_event == pulldom.START_DOCUMENT or \
                 self.current_event == pulldom.START_ELEMENT or \
                 self.current_event == pulldom.END_ELEMENT or \
                 self.current_event == pulldom.END_DOCUMENT or \
                 self.current_event == pulldom.CHARACTERS:
                 break
-    
+
     def parse(self):
-        self.nextEvent() 
-        rootTag = self.getTagName(self.current_node)
-        root = self.newInstance(rootTag, self.current_node.attributes)
-        
-    def deserialize(self, node):
-        if self.current_event == pulldom.START_ELEMENT:
-            name = node.tagName
-            attribs = node.attributes
-            self.stack.append(self.newInstance(name, attribs))
-            if self.root == None:
-                self.root = self.stack[0] 
-        
-        if self.current_event == pulldom.END_ELEMENT:
-            self.stack.pop()
-            
-        if self.current_event == pulldom.CHARACTERS:
-            pass
-            
-    def newInstance(self, name, attrs):
+        self.nextEvent()
+        if self.current_event == pulldom.START_DOCUMENT:
+            self.nextEvent()
+        self.rootTag = self.getTagName()
+        self.root = self.getObjectModel(self.rootTag, self.current_node.attributes)
+
+    def getObjectModel(self, name, attrs):
         class_descriptor = self.scope.classDescriptors[name]
         class_name = class_descriptor.simpl_name
         self.simpl_class = createClass(class_name)
-        new_instance = getClassInstance(class_name)
-        setattr(new_instance, "simpl_tag_name", class_descriptor.tagName) 
+        root = getClassInstance(class_name)
+        setattr(root, "simpl_tag_name", class_descriptor.tagName)
+        self.deserializeAttributes(root, attrs, class_descriptor)
+        self.nextEvent()
+        self.xmlText = ""
+
+        currentFileDescriptor = None
+
+        while self.current_event != pulldom.END_DOCUMENT and \
+                (self.current_event != pulldom.END_ELEMENT or (not self.rootTag == self.getTagName())):
+            if self.current_event != pulldom.START_ELEMENT:
+                if self.current_event == pulldom.CHARACTERS:
+                    self.xmlText += self.current_node.wholeText
+                elif self.current_event == pulldom.END_ELEMENT:
+                    pass #to implement !!!!!!!!!!
+                self.nextEvent()
+                continue
+
+            tag = self.getTagName()
+
+            self.current_field_descriptor = self.scope.getFileDescriptorFromTag(tag, name)
+            if self.current_field_descriptor.getType() == FieldType.SCALAR:
+                self.deserializeScalar(root, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.COMPOSITE_ELEMENT:
+                self.deserializeComposite(root, self.current_field_descriptor)
+            else:
+                self.nextEvent()
+
+
+    def deserializeAttributes(self, root, attrs, class_descriptor):
         if len(attrs) > 0:
             for key, value in attrs.items():
                 fd = class_descriptor.fieldDescriptors[key];
                 if fd.isScalarTag():
                     print("just set attr " + fd.name + ", with the value " + value)
-                    setattr(new_instance, fd.name, value)
-                    
-    def deserializeAttributes(self):
-        pass
-        
-    def deserializeScalar(self, parent, field_descriptor):
-        pass
-    
+                    setattr(root, fd.name, value)
+
+
+    def deserializeScalar(self, parent, fd):
+        value = ""
+        while self.current_event != pulldom.END_ELEMENT:
+            if self.current_event == pulldom.CHARACTERS:
+                value += self.current_node.wholeText
+
+        print("just set attr " + fd.name + ", with the value " + value)
+        setattr(parent, fd.name, value)
+
+        self.nextEvent()
+
     def deserializeComposite(self, parent, field_descriptor):
         pass
-    
+
     def deserializeCompositeCollection(self, parent, field_descriptor):
         pass
-    
+
     def deserializeCompositeMap(self, parent, field_descriptor):
         pass
-    
+
     def getSimplReference(self):
         pass
 
-    def getTagName(self, node):
+    def getTagName(self):
+        node = self.current_node
         if node.prefix != None and node.prefix != "":
             return node.prefix + ":" + node.localName
         else:
             return node.localName
-        
-    
-    
-if False:  
+
+
+
+if False:
     def deserialize_xml_from_string(string):
         return ElementTree.fromstring(string)
-    
+
     def deserialize_xml_from_file(filename):
         xml_file = open(filename, "r")
         data_string = xml_file.read()
@@ -119,19 +143,19 @@ if False:
             self.scope = scope
             self.xml_tree = xml_tree
             self.instance = None
-            
+
         def start_deserialize(self):
             name = self.xml_tree.tag
             attrs = self.xml_tree.attrib
             child_nodes = list(self.xml_tree)
             self.instance = self.deserialize(name, attrs, child_nodes)
-            
+
         def deserialize(self, name, attrs, child_nodes):
             class_descriptor = self.scope.classDescriptors[name]
             class_name = class_descriptor.simpl_name
             self.simpl_class = createClass(class_name)
             new_instance = getClassInstance(class_name)
-            setattr(new_instance, "simpl_tag_name", class_descriptor.tagName)      
+            setattr(new_instance, "simpl_tag_name", class_descriptor.tagName)
             if len(attrs) > 0:
                 for key, value in attrs.items():
                     fd = class_descriptor.fieldDescriptors[key];
@@ -150,7 +174,7 @@ if False:
                         if fd.simpl_type == "composite":
                             child_tag_name = self.scope.findClassByFullName(fd.element_class)
                             setattr(new_instance, fd.name, self.deserialize(child_tag_name, node.attrib, list(node)))
-                    
+
                     #nowrap collections
                     elif node_name in class_descriptor.collectionFieldDescriptors:
                         fd = class_descriptor.collectionFieldDescriptors[node_name]
@@ -158,7 +182,7 @@ if False:
                             current_list = getattr(new_instance, fd.name)
                         else:
                             current_list = []
-                        child_tag_name = self.scope.findClassByFullName(fd.element_class)    
+                        child_tag_name = self.scope.findClassByFullName(fd.element_class)
                         current_list.append(self.deserialize(child_tag_name, node.attrib, list(node)))
                         setattr(new_instance, fd.name, current_list)
                         if False:
@@ -168,5 +192,5 @@ if False:
                                 current_list.append(self.deserialize(child_tag_name, member))
                             setattr(new_instance, fd.name, current_list)
             #if len(child_nodes) > 0:
-                
+
             return new_instance
