@@ -33,3 +33,6 @@ class FieldDescriptor(object):
     
     def getScalarType(self):
         return self.scalar_type
+    
+    def getType(self):
+        return self.type

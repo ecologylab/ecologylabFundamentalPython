@@ -51,19 +51,20 @@ class SimplXmlDeserializer(PullDeserializer):
         if self.current_event == pulldom.START_DOCUMENT:
             self.nextEvent()
         self.rootTag = self.getTagName()
-        self.root = self.getObjectModel(self.rootTag, self.current_node.attributes)
+        self.root = self.getObjectModel(self.rootTag)
 
-    def getObjectModel(self, name, attrs):
+    def getObjectModel(self, name):
         class_descriptor = self.scope.classDescriptors[name]
         class_name = class_descriptor.simpl_name
         self.simpl_class = createClass(class_name)
         root = getClassInstance(class_name)
         setattr(root, "simpl_tag_name", class_descriptor.tagName)
+        attrs = self.current_node.attributes
         self.deserializeAttributes(root, attrs, class_descriptor)
         self.nextEvent()
         self.xmlText = ""
 
-        currentFileDescriptor = None
+        self.currentFileDescriptor = None
 
         while self.current_event != pulldom.END_DOCUMENT and \
                 (self.current_event != pulldom.END_ELEMENT or (not self.rootTag == self.getTagName())):
@@ -84,6 +85,7 @@ class SimplXmlDeserializer(PullDeserializer):
                 self.deserializeComposite(root, self.current_field_descriptor)
             else:
                 self.nextEvent()
+        return root
 
 
     def deserializeAttributes(self, root, attrs, class_descriptor):
@@ -100,15 +102,17 @@ class SimplXmlDeserializer(PullDeserializer):
         while self.current_event != pulldom.END_ELEMENT:
             if self.current_event == pulldom.CHARACTERS:
                 value += self.current_node.wholeText
+            self.nextEvent()
 
-        print("just set attr " + fd.name + ", with the value " + value)
         setattr(parent, fd.name, value)
-
         self.nextEvent()
 
     def deserializeComposite(self, parent, field_descriptor):
-        pass
-
+        tag = self.getTagName()
+        class_name = self.scope.findClassByFullName(field_descriptor.element_class)
+        subRoot = self.getObjectModel(class_name)
+        setattr(parent, tag, subRoot)
+        
     def deserializeCompositeCollection(self, parent, field_descriptor):
         pass
 
