@@ -53,7 +53,7 @@ class SimplTypesScope(object):
                 fieldDescriptor = FieldDescriptor()
                 fieldDescriptor.name = fd['name']
                 fieldDescriptor.tagName = fd['tag_name']
-                fieldDescriptor.type = int(fd['type'])
+                fieldDescriptor.type = fd['type']
                 fieldDescriptor.field = fd['field']
                 fieldDescriptor.field_type = fd['field_type']
                 fieldDescriptor.libraryNamespaces = fd['library_namespaces']
@@ -107,6 +107,8 @@ class SimplTypesScope(object):
 
     def getFileDescriptorFromTag(self, tag, rootTag):
         class_descriptor = self.classDescriptors[rootTag]
+        if tag in class_descriptor.collectionFieldDescriptors:
+            return class_descriptor.collectionFieldDescriptors[tag]
         return class_descriptor.fieldDescriptors[tag]
 
 
@@ -125,9 +127,10 @@ class SimplTypesScope(object):
 
     def deserialize(self, input_file, serialization_format):
         if serialization_format == "XML":
-            xml_deserializer = SimplXmlDeserializer(self, input_file)
-            xml_deserializer.parse()
-            return xml_deserializer.root
+            xml_tree = deserialize_xml_from_file(input_file)
+            xml_deserializer = SimplXmlDeserializer(self, xml_tree)
+            xml_deserializer.start_deserialize()
+            return xml_deserializer.instance
 
         if serialization_format == "JSON":
             json_tree = deserialize_from_file(input_file)
