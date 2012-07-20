@@ -27,12 +27,18 @@ class FieldDescriptor(object):
             self.type == FieldType.COLLECTION_SCALAR:
             return True
         return False
-    
+
     def isNested(self):
         return self.type == FieldType.COMPOSITE_ELEMENT
-    
+
     def getScalarType(self):
         return self.scalar_type
-    
+
     def getType(self):
-        return self.type
+        return int(self.type)
+
+    def isCollectionTag(self, tagName):
+        if hasattr(self, "collection_tag_name"):
+            return tagName == self.collection_tag_name
+        else:
+            return False
