@@ -3,9 +3,10 @@
       "name":"collectionOfCirclesTScope",
       "class_descriptor":[
          {
-            "simpl.id":"32077430",
+            "simpl.id":"6308367",
             "name":"tests.circle.Point",
             "tag_name":"point",
+            "described_class":"tests.circle.Point",
             "described_class_simple_name":"Point",
             "described_class_package_name":"tests.circle",
             "field_descriptor":[
@@ -18,7 +19,7 @@
                   "xml_hint":"XML_ATTRIBUTE",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"32077430"
+                     "simpl.ref":"6308367"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -35,7 +36,7 @@
                   "xml_hint":"XML_ATTRIBUTE",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"32077430"
+                     "simpl.ref":"6308367"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -46,9 +47,10 @@
             ]
          },
          {
-            "simpl.id":"1729135",
+            "simpl.id":"3449340",
             "name":"tests.circle.CollectionOfCircles",
             "tag_name":"collection_of_circles",
+            "described_class":"tests.circle.CollectionOfCircles",
             "described_class_simple_name":"CollectionOfCircles",
             "described_class_package_name":"tests.circle",
             "field_descriptor":[
@@ -61,12 +63,12 @@
                   "type":"4",
                   "collection_type":"simpl.types.collection.ArrayList",
                   "collection_or_map_tag_name":"circles",
-                  "wrapped":"true",
                   "field_type":"ArrayList",
                   "element_class_descriptor":{
-                     "simpl.id":"24561483",
+                     "simpl.id":"18237215",
                      "name":"tests.circle.Circle",
                      "tag_name":"circle",
+                     "described_class":"tests.circle.Circle",
                      "described_class_simple_name":"Circle",
                      "described_class_package_name":"tests.circle",
                      "field_descriptor":[
@@ -79,7 +81,7 @@
                            "xml_hint":"XML_LEAF",
                            "field_type":"int",
                            "declaring_class_descriptor":{
-                              "simpl.ref":"24561483"
+                              "simpl.ref":"18237215"
                            },
                            "library_namespaces":{
                               "library_namespace":[
@@ -96,10 +98,10 @@
                            "composite_tag_name":"center",
                            "field_type":"Point",
                            "element_class_descriptor":{
-                              "simpl.ref":"32077430"
+                              "simpl.ref":"6308367"
                            },
                            "declaring_class_descriptor":{
-                              "simpl.ref":"24561483"
+                              "simpl.ref":"18237215"
                            },
                            "library_namespaces":{
                               "library_namespace":[
@@ -110,7 +112,7 @@
                      ]
                   },
                   "declaring_class_descriptor":{
-                     "simpl.ref":"1729135"
+                     "simpl.ref":"3449340"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -127,7 +129,7 @@
                   "xml_hint":"XML_LEAF",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"1729135"
+                     "simpl.ref":"3449340"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -138,7 +140,7 @@
             ]
          },
          {
-            "simpl.ref":"24561483"
+            "simpl.ref":"18237215"
          }
       ]
    }
