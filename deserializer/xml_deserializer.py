@@ -8,7 +8,6 @@ from serializer.xml_serializer import prettify, XmlSimplSerializer
 from deserializer.deserializer_utils import *
 from deserializer.pull_deserializer import PullDeserializer
 
-from xml.etree import ElementTree
 from xml.dom import pulldom
 from deserializer.field_type import FieldType
 
@@ -43,6 +42,7 @@ class SimplXmlDeserializer(PullDeserializer):
                 nodeText = self.current_node.wholeText
                 nodeText = nodeText.replace(' ','')
                 nodeText = nodeText.replace('\n', '')
+                nodeText = nodeText.replace('\t', '')
                 if nodeText == "":
                     continue
             if self.current_event == pulldom.START_DOCUMENT or \
@@ -91,6 +91,8 @@ class SimplXmlDeserializer(PullDeserializer):
                 self.deserializeComposite(root, self.current_field_descriptor)
             elif self.current_field_descriptor.getType() == FieldType.COLLECTION_ELEMENT:
                 self.deserializeCompositeCollection(self, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.COLLECTION_SCALAR:
+                self.deserializeScalarCollection(self, self.current_field_descriptor)
             else:
                 self.nextEvent()
         return root
@@ -104,7 +106,7 @@ class SimplXmlDeserializer(PullDeserializer):
                 fd = class_descriptor.fieldDescriptors[key];
                 if fd.isScalarTag():
                     print("just set attr " + fd.name + ", with the value " + value)
-                    setattr(root, fd.name, value)
+                    setattr(root, fd.name, fd.getValue(value))
 
 
     def deserializeScalar(self, parent, fd):
@@ -114,7 +116,7 @@ class SimplXmlDeserializer(PullDeserializer):
                 value += self.current_node.wholeText
             self.nextEvent()
 
-        setattr(parent, fd.name, value)
+        setattr(parent, fd.name, fd.getValue(value))
         self.nextEvent()
 
     def deserializeComposite(self, parent, field_descriptor):
@@ -124,6 +126,37 @@ class SimplXmlDeserializer(PullDeserializer):
         setattr(parent, tag, subRoot)
         self.nextEvent()
 
+    def deserializeScalarCollection(self, parent, fd):
+        if hasattr(parent, fd.name):
+            current_list = getattr(parent, fd.name)
+        else:
+            current_list = []
+        self.current_collection = fd.name
+        #self.nextEvent()
+        if fd.wrapped:
+            self.nextEvent()
+        tagName = self.getTagName()
+        if not fd.isCollectionTag(tagName):
+            self.ignoreTag(tagName)
+        else:
+            while fd.isCollectionTag(tagName):
+                if self.current_event != pulldom.START_ELEMENT:
+                    break
+                else:
+                    value = ""
+                    while self.current_event != pulldom.END_ELEMENT:
+                        if self.current_event == pulldom.CHARACTERS:
+                            value += self.current_node.wholeText
+                        self.nextEvent()
+                    
+                    current_list.append(fd.getValue(value))
+                    setattr(parent, fd.name, current_list)    
+                    self.nextEvent()
+                    tagName = self.getTagName()
+
+        return self.current_event
+    
+    
     def deserializeCompositeCollection(self, parent, fd):
         #fd = class_descriptor.collectionFieldDescriptors[node_name]
         if hasattr(parent, fd.name):
@@ -132,20 +165,25 @@ class SimplXmlDeserializer(PullDeserializer):
             current_list = []
         self.current_collection = fd.name
         #self.nextEvent()
+        if fd.wrapped:
+            self.nextEvent()
         tagName = self.getTagName()
-        while fd.isCollectionTag(tagName):
-            if self.current_event != pulldom.START_ELEMENT:
-                break
-            else:
-                child_tag_name = self.scope.findClassByFullName(fd.element_class)
-                subRoot = self.getObjectModel(child_tag_name, tagName)
-                current_list.append(subRoot)
-                setattr(parent, fd.name, current_list)
+        if not fd.isCollectionTag(tagName):
+            self.ignoreTag(tagName)
+        else:
+            while fd.isCollectionTag(tagName):
+                if self.current_event != pulldom.START_ELEMENT:
+                    break
+                else:
+                    child_tag_name = self.scope.findClassByFullName(fd.element_class)
+                    subRoot = self.getObjectModel(child_tag_name, tagName)
+                    current_list.append(subRoot)
+                    setattr(parent, fd.name, current_list)
+    
+                    self.nextEvent()
+                    tagName = self.getTagName()
 
-                self.nextEvent()
-                tagName = self.getTagName()
-
-        return self.current_event
+        self.nextEvent()
 
     def deserializeCompositeMap(self, parent, field_descriptor):
         pass
@@ -159,3 +197,8 @@ class SimplXmlDeserializer(PullDeserializer):
             return node.prefix + ":" + node.localName
         else:
             return node.localName
+        
+    def ignoreTag(self, tag):
+        while self.current_event != pulldom.END_ELEMENT or (not self.getTagName() == tag):
+            self.nextEvent()
+        self.nextEvent()

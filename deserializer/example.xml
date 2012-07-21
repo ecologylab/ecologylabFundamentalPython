@@ -1,35 +1,43 @@
 <?xml version="1.0" ?>
-<collection_of_circles xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html">
-  <circles>
-    <radius>
-      1
-    </radius>
-    <center x="2" y="3"/>
-  </circles>
-  <circles>
-    <radius>
-      1
-    </radius>
-    <center x="2" y="4"/>
-  </circles>
-  <circles>
-    <radius>
-      1
-    </radius>
-    <center x="2" y="5"/>
-  </circles>
-  <circles>
-    <radius>
-      1
-    </radius>
-    <center x="2" y="6"/>
-  </circles>
-  <circles>
-    <radius>
-      1
-    </radius>
-    <center x="2" y="7"/>
-  </circles>
+<collection_of_circles str="buzz" xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html">
+  <collection_of_circles>
+    <circles>
+      <radius>
+        1
+      </radius>
+      <center x="2" y="3"/>
+    </circles>
+    <circles>
+      <radius>
+        1
+      </radius>
+      <center x="2" y="4"/>
+    </circles>
+    <circles>
+      <radius>
+        1
+      </radius>
+      <center x="2" y="5"/>
+    </circles>
+    <circles>
+      <radius>
+        1
+      </radius>
+      <center x="2" y="6"/>
+    </circles>
+    <circles>
+      <radius>
+        1
+      </radius>
+      <center x="2" y="7"/>
+    </circles>
+  </collection_of_circles>
+  <dummy>
+    19
+  </dummy>
+  <dummy>
+    23
+  </dummy>
   <yo>
     1
   </yo>

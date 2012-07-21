@@ -1,25 +1,25 @@
 {
    "simpl_types_scope":{
-      "name":"TestScope",
+      "name":"collectionOfCirclesTScope",
       "class_descriptor":[
          {
-            "simpl.id":"14978587",
-            "name":"mytests.AnotherEasyClass",
-            "tag_name":"another_easy_class",
-            "described_class":"mytests.AnotherEasyClass",
-            "described_class_simple_name":"AnotherEasyClass",
-            "described_class_package_name":"mytests",
+            "simpl.id":"30721564",
+            "name":"tests.circle.Point",
+            "tag_name":"point",
+            "described_class":"tests.circle.Point",
+            "described_class_simple_name":"Point",
+            "described_class_package_name":"tests.circle",
             "field_descriptor":[
                {
-                  "name":"anotherNumber",
-                  "tag_name":"another_number",
-                  "field":"anotherNumber",
+                  "name":"x",
+                  "tag_name":"x",
+                  "field":"x",
                   "type":"18",
-                  "scalar_type":"float",
+                  "scalar_type":"int",
                   "xml_hint":"XML_ATTRIBUTE",
-                  "field_type":"float",
+                  "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"14978587"
+                     "simpl.ref":"30721564"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -28,59 +28,15 @@
                   }
                },
                {
-                  "name":"anotherEasyClass",
-                  "tag_name":"another_easy_class",
-                  "field":"anotherEasyClass",
-                  "element_class":"mytests.EasyClass",
-                  "type":"3",
-                  "composite_tag_name":"another_easy_class",
-                  "field_type":"EasyClass",
-                  "element_class_descriptor":{
-                     "simpl.id":"3195425",
-                     "name":"mytests.EasyClass",
-                     "tag_name":"easy_class",
-                     "described_class":"mytests.EasyClass",
-                     "described_class_simple_name":"EasyClass",
-                     "described_class_package_name":"mytests",
-                     "field_descriptor":[
-                        {
-                           "name":"number",
-                           "tag_name":"number",
-                           "field":"number",
-                           "type":"18",
-                           "scalar_type":"int",
-                           "xml_hint":"XML_ATTRIBUTE",
-                           "field_type":"int",
-                           "declaring_class_descriptor":{
-                              "simpl.ref":"3195425"
-                           },
-                           "library_namespaces":{
-                              "library_namespace":[
-
-                              ]
-                           }
-                        },
-                        {
-                           "name":"name",
-                           "tag_name":"name",
-                           "field":"name",
-                           "type":"18",
-                           "scalar_type":"String",
-                           "xml_hint":"XML_ATTRIBUTE",
-                           "field_type":"String",
-                           "declaring_class_descriptor":{
-                              "simpl.ref":"3195425"
-                           },
-                           "library_namespaces":{
-                              "library_namespace":[
-
-                              ]
-                           }
-                        }
-                     ]
-                  },
+                  "name":"y",
+                  "tag_name":"y",
+                  "field":"y",
+                  "type":"18",
+                  "scalar_type":"int",
+                  "xml_hint":"XML_ATTRIBUTE",
+                  "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"14978587"
+                     "simpl.ref":"30721564"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -91,7 +47,121 @@
             ]
          },
          {
-            "simpl.ref":"3195425"
+            "simpl.id":"26696537",
+            "name":"tests.circle.CollectionOfCircles",
+            "tag_name":"collection_of_circles",
+            "described_class":"tests.circle.CollectionOfCircles",
+            "described_class_simple_name":"CollectionOfCircles",
+            "described_class_package_name":"tests.circle",
+            "field_descriptor":[
+               {
+                  "name":"collectionOfCircles",
+                  "tag_name":"collection_of_circles",
+                  "field":"collectionOfCircles",
+                  "element_class":"tests.circle.Circle",
+                  "is_generic":"true",
+                  "type":"4",
+                  "collection_type":"simpl.types.collection.ArrayList",
+                  "collection_or_map_tag_name":"circles",
+                  "wrapped":"true",
+                  "field_type":"ArrayList",
+                  "element_class_descriptor":{
+                     "simpl.id":"15041882",
+                     "name":"tests.circle.Circle",
+                     "tag_name":"circle",
+                     "described_class":"tests.circle.Circle",
+                     "described_class_simple_name":"Circle",
+                     "described_class_package_name":"tests.circle",
+                     "field_descriptor":[
+                        {
+                           "name":"radius",
+                           "tag_name":"radius",
+                           "field":"radius",
+                           "type":"18",
+                           "scalar_type":"int",
+                           "xml_hint":"XML_LEAF",
+                           "field_type":"int",
+                           "declaring_class_descriptor":{
+                              "simpl.ref":"15041882"
+                           },
+                           "library_namespaces":{
+                              "library_namespace":[
+
+                              ]
+                           }
+                        },
+                        {
+                           "name":"center",
+                           "tag_name":"center",
+                           "field":"center",
+                           "element_class":"tests.circle.Point",
+                           "type":"3",
+                           "composite_tag_name":"center",
+                           "field_type":"Point",
+                           "element_class_descriptor":{
+                              "simpl.ref":"30721564"
+                           },
+                           "declaring_class_descriptor":{
+                              "simpl.ref":"15041882"
+                           },
+                           "library_namespaces":{
+                              "library_namespace":[
+
+                              ]
+                           }
+                        }
+                     ]
+                  },
+                  "declaring_class_descriptor":{
+                     "simpl.ref":"26696537"
+                  },
+                  "library_namespaces":{
+                     "library_namespace":[
+
+                     ]
+                  }
+               },
+               {
+                  "name":"dummyList",
+                  "tag_name":"dummy_list",
+                  "field":"dummyList",
+                  "is_generic":"true",
+                  "type":"5",
+                  "scalar_type":"Integer",
+                  "collection_type":"simpl.types.collection.ArrayList",
+                  "xml_hint":"XML_ATTRIBUTE",
+                  "collection_or_map_tag_name":"dummy",
+                  "field_type":"ArrayList",
+                  "declaring_class_descriptor":{
+                     "simpl.ref":"26696537"
+                  },
+                  "library_namespaces":{
+                     "library_namespace":[
+
+                     ]
+                  }
+               },
+               {
+                  "name":"yo",
+                  "tag_name":"yo",
+                  "field":"yo",
+                  "type":"18",
+                  "scalar_type":"int",
+                  "xml_hint":"XML_LEAF",
+                  "field_type":"int",
+                  "declaring_class_descriptor":{
+                     "simpl.ref":"26696537"
+                  },
+                  "library_namespaces":{
+                     "library_namespace":[
+
+                     ]
+                  }
+               }
+            ]
+         },
+         {
+            "simpl.ref":"15041882"
          }
       ]
    }

@@ -42,3 +42,13 @@ class FieldDescriptor(object):
             return tagName == self.collection_tag_name
         else:
             return False
+        
+    def getValue(self, textValue):
+        if hasattr(self, "scalar_type"):
+            if self.scalar_type == "Integer" or self.scalar_type == "int":
+                return int(textValue)
+            if self.scalar_type == "Float" or self.scalar_type == "float":
+                return float(textValue)
+            if self.scalar_type == "String":
+                return textValue
+            

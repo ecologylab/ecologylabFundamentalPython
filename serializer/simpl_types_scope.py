@@ -68,21 +68,21 @@ class SimplTypesScope(object):
                 if 'scalar_type' in fd:
                     fieldDescriptor.scalar_type = fd['scalar_type']
                     fieldDescriptor.simpl_type = "scalar"
-                else: # to see other types, like collections
-                    if 'composite_tag_name' in fd:
-                        fieldDescriptor.simpl_type = "composite"
-                        fieldDescriptor.composite_tagame = fd['composite_tag_name']
-                        elementClassDescriptor = fd['element_class_descriptor']
-                        if 'simpl.id' in elementClassDescriptor:
-                            self.parseRoot(elementClassDescriptor)
-                    if 'collection_type' in fd:
-                        fieldDescriptor.simpl_type = "collection"
-                        if 'wrapped' in fd:
-                            fieldDescriptor.wrapped = True
-                        else:
-                            fieldDescriptor.wrapped = False
-                        fieldDescriptor.is_generic = fd['is_generic']
-                        fieldDescriptor.collection_tag_name = fd['collection_or_map_tag_name']
+                if 'composite_tag_name' in fd:
+                    fieldDescriptor.simpl_type = "composite"
+                    fieldDescriptor.composite_tagame = fd['composite_tag_name']
+                    elementClassDescriptor = fd['element_class_descriptor']
+                    if 'simpl.id' in elementClassDescriptor:
+                        self.parseRoot(elementClassDescriptor)
+                if 'collection_type' in fd:
+                    fieldDescriptor.simpl_type = "collection"
+                    if 'wrapped' in fd:
+                        fieldDescriptor.wrapped = True
+                    else:
+                        fieldDescriptor.wrapped = False
+                    fieldDescriptor.is_generic = fd['is_generic']
+                    fieldDescriptor.collection_tag_name = fd['collection_or_map_tag_name']
+                    if fieldDescriptor.getType() == FieldType.COLLECTION_ELEMENT:
                         elementClassDescriptor = fd['element_class_descriptor']
                         if 'simpl.id' in elementClassDescriptor:
                             self.parseRoot(elementClassDescriptor)

@@ -3,7 +3,7 @@
       "name":"collectionOfCirclesTScope",
       "class_descriptor":[
          {
-            "simpl.id":"6308367",
+            "simpl.id":"30721564",
             "name":"tests.circle.Point",
             "tag_name":"point",
             "described_class":"tests.circle.Point",
@@ -19,7 +19,7 @@
                   "xml_hint":"XML_ATTRIBUTE",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"6308367"
+                     "simpl.ref":"30721564"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -36,7 +36,7 @@
                   "xml_hint":"XML_ATTRIBUTE",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"6308367"
+                     "simpl.ref":"30721564"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -47,7 +47,7 @@
             ]
          },
          {
-            "simpl.id":"3449340",
+            "simpl.id":"26696537",
             "name":"tests.circle.CollectionOfCircles",
             "tag_name":"collection_of_circles",
             "described_class":"tests.circle.CollectionOfCircles",
@@ -63,9 +63,10 @@
                   "type":"4",
                   "collection_type":"simpl.types.collection.ArrayList",
                   "collection_or_map_tag_name":"circles",
+                  "wrapped":"true",
                   "field_type":"ArrayList",
                   "element_class_descriptor":{
-                     "simpl.id":"18237215",
+                     "simpl.id":"15041882",
                      "name":"tests.circle.Circle",
                      "tag_name":"circle",
                      "described_class":"tests.circle.Circle",
@@ -81,7 +82,7 @@
                            "xml_hint":"XML_LEAF",
                            "field_type":"int",
                            "declaring_class_descriptor":{
-                              "simpl.ref":"18237215"
+                              "simpl.ref":"15041882"
                            },
                            "library_namespaces":{
                               "library_namespace":[
@@ -98,10 +99,10 @@
                            "composite_tag_name":"center",
                            "field_type":"Point",
                            "element_class_descriptor":{
-                              "simpl.ref":"6308367"
+                              "simpl.ref":"30721564"
                            },
                            "declaring_class_descriptor":{
-                              "simpl.ref":"18237215"
+                              "simpl.ref":"15041882"
                            },
                            "library_namespaces":{
                               "library_namespace":[
@@ -112,7 +113,7 @@
                      ]
                   },
                   "declaring_class_descriptor":{
-                     "simpl.ref":"3449340"
+                     "simpl.ref":"26696537"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -129,7 +130,7 @@
                   "xml_hint":"XML_LEAF",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"3449340"
+                     "simpl.ref":"26696537"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -140,7 +141,7 @@
             ]
          },
          {
-            "simpl.ref":"18237215"
+            "simpl.ref":"15041882"
          }
       ]
    }
