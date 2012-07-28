@@ -95,6 +95,9 @@ class SimplXmlDeserializer(PullDeserializer):
                 self.deserializeScalarCollection(root, self.current_field_descriptor)
             elif self.current_field_descriptor.getType() == FieldType.MAP_ELEMENT:
                 self.deserializeCompositeMap(root, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.MAP_SCALAR:
+                self.deserializeScalarMap(root, self.current_field_descriptor)
+                
             else:
                 self.nextEvent()
         return root
@@ -151,9 +154,40 @@ class SimplXmlDeserializer(PullDeserializer):
                     setattr(parent, fd.name, current_dict)
                     self.nextEvent()
                     tagName = self.getTagName()
-
-        #self.nextEvent()
+        if fd.wrapped:
+            self.nextEvent()
     
+    def deserializeScalarMap(self, parent, fd):
+        if hasattr(parent, fd.name):
+            current_dict = getattr(parent, fd.name)
+        else:
+            current_dict = {}
+        self.current_collection = fd.name
+        #self.nextEvent()
+        if fd.wrapped:
+            self.nextEvent()
+        tagName = self.getTagName()
+        if not fd.isCollectionTag(tagName):
+            self.ignoreTag(tagName)
+        else:
+            while fd.isCollectionTag(tagName):
+                if self.current_event != pulldom.START_ELEMENT:
+                    break
+                else:
+                    value = ""
+                    while self.current_event != pulldom.END_ELEMENT:
+                        if self.current_event == pulldom.CHARACTERS:
+                            value += self.current_node.wholeText
+                        self.nextEvent()
+                    
+                    # this is an implementation based on the key being equal to the value
+                    current_dict[value] = value
+                    setattr(parent, fd.name, current_dict)    
+                    self.nextEvent()
+                    tagName = self.getTagName() 
+        if fd.wrapped:
+            self.nextEvent()
+                      
     def deserializeScalarCollection(self, parent, fd):
         if hasattr(parent, fd.name):
             current_list = getattr(parent, fd.name)
@@ -181,7 +215,9 @@ class SimplXmlDeserializer(PullDeserializer):
                     setattr(parent, fd.name, current_list)    
                     self.nextEvent()
                     tagName = self.getTagName()    
-        
+            if fd.wrapped:
+                self.nextEvent()
+            
     def deserializeCompositeCollection(self, parent, fd):
         if hasattr(parent, fd.name):
             current_list = getattr(parent, fd.name)
