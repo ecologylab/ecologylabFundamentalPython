@@ -7,10 +7,7 @@ import json
 #from serializer.simpl_types_scope import SimplTypesScope
 from deserializer.deserializer_utils import *
 from deserializer.pull_deserializer import PullDeserializer
-#from ijson import items
-
-class SimplJsonDeserializer(PullDeserializer):
-    pass
+#from ijson import items, parse
 
 
 def deserialize_from_string(data_string):
@@ -24,6 +21,38 @@ def deserialize_from_file(filename):
     json_file.close()
     return scope
 
+def deserialize_events_from_file(filename):
+    json_file = open(filename, "r")
+    data_string = json_file.read()
+    return parse(data_string)
+
+if False:
+    class SimplJsonDeserializer(PullDeserializer):
+        def __init__(self, scope, input_file, deserializationHookStrategy = None):
+            super().__init__(scope, input_file)
+            self.scope = scope
+            self.root = None
+            self.stack = []
+            self.current_collection = None
+            self.prefix = None
+            self.event = None
+            self.value = None
+            self.current_field_descriptor = None
+            self.deserializationHookStrategy = deserializationHookStrategy
+            try:
+                self.pull_events = deserialize_events_from_file(input_file)
+            except IOError as e:
+                print ("Cannot read from file: " + e.strerror)
+    
+        def nextEvent(self):
+            self.prefix, self.event, self.value = self.pull_events.next()
+        
+        def parse(self):
+            #self.nextEvent()
+            #self.rootTag = 
+            for prefix, event, value in self.pull_events:
+                print("preifx: " + prefix + ", event: " + event + ", value: " + value)
+            
 if False:
     class SimplJsonDeserializer:
         def __init__(self, scope, json_tree):

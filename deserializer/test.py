@@ -64,9 +64,12 @@ if False:
     obj = xml_deserializer.instance
     xmlserializer = XmlSimplSerializer(obj, scope)
     print(prettify(xmlserializer.serialize()))
-    
+
+    scope = SimplTypesScope("JSON", "scope_test")
+    json_des = SimplJsonDeserializer(scope,"example.json")
+    json_des.parse()
+
 scope = SimplTypesScope("JSON", "scope_test")
 xml_deserializer = SimplXmlDeserializer(scope, "example.xml")
 xml_deserializer.parse()
 obj = xml_deserializer.root
-

@@ -82,16 +82,18 @@ class SimplTypesScope(object):
                         fieldDescriptor.wrapped = False
                     fieldDescriptor.is_generic = fd['is_generic']
                     fieldDescriptor.collection_tag_name = fd['collection_or_map_tag_name']
-                    if fieldDescriptor.getType() == FieldType.COLLECTION_ELEMENT:
+                    if 'element_class_descriptor' in fd:
                         elementClassDescriptor = fd['element_class_descriptor']
                         if 'simpl.id' in elementClassDescriptor:
                             self.parseRoot(elementClassDescriptor)
-
+                if "map_key_field_name" in fd:
+                    fieldDescriptor.map_key = fd["map_key_field_name"]
+                    classDescriptor.key_field = fieldDescriptor
                 if 'xml_hint' in fd:
                     fieldDescriptor.xml_hint = fd['xml_hint']
 
                 classDescriptor.fieldDescriptors[fieldDescriptor.tagName] = fieldDescriptor
-
+                
                 #collectionFieldDescriptors describe only nowrap collection members
                 if fieldDescriptor.simpl_type == 'collection':
                     classDescriptor.collectionFieldDescriptors[fieldDescriptor.collection_tag_name] = fieldDescriptor
@@ -127,10 +129,9 @@ class SimplTypesScope(object):
 
     def deserialize(self, input_file, serialization_format):
         if serialization_format == "XML":
-            xml_tree = deserialize_xml_from_file(input_file)
-            xml_deserializer = SimplXmlDeserializer(self, xml_tree)
-            xml_deserializer.start_deserialize()
-            return xml_deserializer.instance
+            xml_deserializer = SimplXmlDeserializer(self, input_file)
+            xml_deserializer.parse()
+            return xml_deserializer.root
 
         if serialization_format == "JSON":
             json_tree = deserialize_from_file(input_file)

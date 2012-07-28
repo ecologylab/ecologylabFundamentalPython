@@ -4,7 +4,7 @@ Created on 05.06.2012
 @author: cristi
 '''
 import unittest
-from simpl_testcases.tests_circle import circle, point
+from simpl_testcases.tests_circle import circle, point, collectionOfCircles, collectionWrapScalar
 
 def run_test(ClassType):
     suite = unittest.TestLoader().loadTestsFromTestCase(ClassType)

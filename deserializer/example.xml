@@ -1,44 +1,13 @@
 <?xml version="1.0" ?>
-<collection_of_circles str="buzz" xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html">
-  <collection_of_circles>
-    <circles>
-      <radius>
-        1
-      </radius>
-      <center x="2" y="3"/>
-    </circles>
-    <circles>
-      <radius>
-        1
-      </radius>
-      <center x="2" y="4"/>
-    </circles>
-    <circles>
-      <radius>
-        1
-      </radius>
-      <center x="2" y="5"/>
-    </circles>
-    <circles>
-      <radius>
-        1
-      </radius>
-      <center x="2" y="6"/>
-    </circles>
-    <circles>
-      <radius>
-        1
-      </radius>
-      <center x="2" y="7"/>
-    </circles>
-  </collection_of_circles>
-  <dummy>
-    19
-  </dummy>
-  <dummy>
-    23
-  </dummy>
-  <yo>
-    1
-  </yo>
-</collection_of_circles>
+<translation_s>
+  <class_descriptor tag_name="cd1">
+    <field_descriptor field_name="fd3_cd1"/>
+    <field_descriptor field_name="fd2_cd1"/>
+    <field_descriptor field_name="fd1_cd1"/>
+  </class_descriptor>
+  <class_descriptor tag_name="cd2">
+    <field_descriptor field_name="fd2_cd2"/>
+    <field_descriptor field_name="fd3_cd2"/>
+    <field_descriptor field_name="fd1_cd2"/>
+  </class_descriptor>
+</translation_s>
