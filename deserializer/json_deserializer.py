@@ -7,8 +7,9 @@ import json
 #from serializer.simpl_types_scope import SimplTypesScope
 from deserializer.deserializer_utils import *
 from deserializer.pull_deserializer import PullDeserializer
-#from ijson import items, parse
+from ijson import items, parse
 
+from deserializer.field_type import FieldType
 
 def deserialize_from_string(data_string):
     deserialized_obj = json.loads(data_string)
@@ -23,69 +24,182 @@ def deserialize_from_file(filename):
 
 def deserialize_events_from_file(filename):
     json_file = open(filename, "r")
-    data_string = json_file.read()
-    return parse(data_string)
+    return iter(parse(json_file))
 
-if False:
-    class SimplJsonDeserializer(PullDeserializer):
-        def __init__(self, scope, input_file, deserializationHookStrategy = None):
-            super().__init__(scope, input_file)
-            self.scope = scope
-            self.root = None
-            self.stack = []
-            self.current_collection = None
-            self.prefix = None
-            self.event = None
-            self.value = None
-            self.current_field_descriptor = None
-            self.deserializationHookStrategy = deserializationHookStrategy
-            try:
-                self.pull_events = deserialize_events_from_file(input_file)
-            except IOError as e:
-                print ("Cannot read from file: " + e.strerror)
+class SimplJsonDeserializer(PullDeserializer):
+    def __init__(self, scope, input_file, deserializationHookStrategy = None):
+        super(SimplJsonDeserializer, self).__init__(scope, input_file)
+        self.scope = scope
+        self.root = None
+        self.current_collection = None
+        self.prefix = None
+        self.event = None
+        self.value = None
+        self.current_field_descriptor = None
+        self.deserializationHookStrategy = deserializationHookStrategy
+        self.isArray = False
+        try:
+            self.pull_events = deserialize_events_from_file(input_file)
+        except IOError as e:
+            print ("Cannot read from file: " + e.strerror)
+
+    def nextEvent(self):
+        self.prefix, self.event, self.value = self.pull_events.next()
     
-        def nextEvent(self):
-            self.prefix, self.event, self.value = self.pull_events.next()
-        
-        def parse(self):
-            #self.nextEvent()
-            #self.rootTag = 
-            for prefix, event, value in self.pull_events:
-                print("preifx: " + prefix + ", event: " + event + ", value: " + value)
+    def parse(self):
+        self.nextEvent()
+        if self.isStartDocument():
+            self.nextEvent()
+        self.rootTag = self.value 
+        self.root = self.getObjectModel(self.rootTag, self.rootTag)
+    
+    def getObjectModel(self, name, rootName):
+        class_descriptor = self.scope.classDescriptors[name]
+        class_name = class_descriptor.simpl_name
+        self.simpl_class = createClass(class_name)
+        root = getClassInstance(class_name)
+        setattr(root, "simpl_tag_name", class_descriptor.tagName)
+        self.nextEvent()
+        self.xmlText = ""
+
+        self.currentFileDescriptor = None
+
+        while (not self.isEndDocument()) and \
+                (not self.isEndMap() or (not rootName == self.getTagName())):
+            if (not self.isNewElement()):
+                if self.isEndMap():
+                    name = self.current_collection
+                self.nextEvent()
+                continue
             
-if False:
-    class SimplJsonDeserializer:
-        def __init__(self, scope, json_tree):
-            self.scope = scope
-            self.json_tree = json_tree
-            self.instance = None
+            if self.isStartMap():
+                self.nextEvent()
+            tag = self.value
+            self.nextEvent()
 
-        def start_deserialize(self):
-            name = list(self.json_tree.keys())[0]
-            attrs = self.json_tree[name]
-            self.instance = self.deserialize(name, attrs)
+            self.current_field_descriptor = self.scope.getFileDescriptorFromTag(tag, name)
+            if self.current_field_descriptor.getType() == FieldType.SCALAR:
+                self.deserializeScalar(root, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.COMPOSITE_ELEMENT:
+                self.deserializeComposite(root, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.COLLECTION_ELEMENT:
+                self.deserializeCompositeCollection(root, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.COLLECTION_SCALAR:
+                self.deserializeScalarCollection(root, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.MAP_ELEMENT:
+                self.deserializeCompositeMap(root, self.current_field_descriptor)
+            elif self.current_field_descriptor.getType() == FieldType.MAP_SCALAR:
+                self.deserializeScalarMap(root, self.current_field_descriptor)
+                
+            else:
+                self.nextEvent()
+        return root
 
-        def deserialize(self, name, attrs):
-            class_descriptor = self.scope.classDescriptors[name]
-            class_name = class_descriptor.simpl_name
-            self.simpl_class = createClass(class_name)
-            new_instance = getClassInstance(class_name)
-            setattr(new_instance, "simpl_tag_name", class_descriptor.tagName)
-            if len(attrs) > 0:
-                for key, value in attrs.items():
-                    fd = class_descriptor.fieldDescriptors[key];
-                    if fd.simpl_type == "scalar":
-                        print("just set attr " + fd.name + ", with the value " + value)
-                        setattr(new_instance, fd.name, value)
-                    if fd.simpl_type == "composite":
-                        child_tag_name = self.scope.findClassByFullName(fd.element_class)
-                        setattr(new_instance, fd.name, self.deserialize(child_tag_name, value))
-                    if fd.simpl_type == "collection":
-                        current_list = []
-                        child_tag_name = self.scope.findClassByFullName(fd.element_class)
-                        members = value[fd.collection_tag_name]
-                        for member in members:
-                            current_list.append(self.deserialize(child_tag_name, member))
-                        setattr(new_instance, fd.name, current_list)
-            return new_instance
+    def deserializeScalar(self, parent, fd):
+        setattr(parent, fd.name, fd.getValue(self.value))
+        self.nextEvent()
 
+    def deserializeComposite(self, parent, field_descriptor):
+        tag = self.getTagName()
+        class_name = self.scope.findClassByFullName(field_descriptor.element_class)
+        subRoot = self.getObjectModel(class_name, tag)
+        setattr(parent, tag, subRoot)
+        self.nextEvent()
+    
+    def deserializeScalarCollection(self, parent, fd):
+        if hasattr(parent, fd.name):
+            current_list = getattr(parent, fd.name)
+        else:
+            current_list = []
+        self.current_collection = fd.name
+        #self.nextEvent()
+        if fd.wrapped:
+            self.nextEvent()
+        tagName = self.getTagName()
+        if not fd.isCollectionTag(tagName):
+            self.ignoreTag(tagName)
+        else:
+            while fd.isCollectionTag(tagName):
+                if self.current_event != pulldom.START_ELEMENT:
+                    break
+                else:
+                    value = ""
+                    while self.current_event != pulldom.END_ELEMENT:
+                        if self.current_event == pulldom.CHARACTERS:
+                            value += self.current_node.wholeText
+                        self.nextEvent()
+                    
+                    current_list.append(fd.getValue(value))
+                    setattr(parent, fd.name, current_list)    
+                    self.nextEvent()
+                    tagName = self.getTagName()    
+            if fd.wrapped:
+                self.nextEvent()
+            
+    def deserializeCompositeCollection(self, parent, fd):
+        if hasattr(parent, fd.name):
+            current_list = getattr(parent, fd.name)
+        else:
+            current_list = []
+        self.current_collection = fd.name
+
+        if fd.wrapped:
+            self.nextEvent()
+        if self.isStartArray():
+            self.nextEvent()
+            self.isArray = True
+        tagName = self.getTagName()
+        if not fd.isCollectionTag(tagName):
+            self.ignoreTag(tagName)
+        else:
+            while fd.isCollectionTag(tagName):
+                if not self.isNewElement:
+                    break
+                else:
+                    child_tag_name = self.scope.findClassByFullName(fd.element_class)
+                    subRoot = self.getObjectModel(child_tag_name, tagName)
+                    current_list.append(subRoot)
+                    setattr(parent, fd.name, current_list)
+    
+                    self.nextEvent()
+                    tagName = self.getTagName()
+        if self.isEndArray():
+            self.nextEvent()
+            self.isArray = False
+        if fd.wrapped:
+            self.nextEvent()
+        
+    def isStartDocument(self):
+        return (self.prefix == "" and self.event == "start_map" and self.value == None)
+    
+    def isEndDocument(self):
+        return (self.prefix == "" and self.event == "end_map" and self.value == None)
+        
+    def isStartMap(self):
+        return self.event == "start_map"
+    
+    def isStartElement(self):
+        return self.event == "map_key" 
+    
+    def isNewElement(self):
+        return self.isStartMap() or self.isStartElement()
+    
+    def isEndMap(self):
+        return self.event == "end_map"
+
+    def isStartArray(self):
+        return self.event == "start_array"
+    
+    def isEndArray(self):
+        return self.event == "end_array"
+    
+    def getTagName(self):
+        if (self.prefix == None):
+            return None
+        else:
+            split_string = self.prefix.split(".")
+            tag = split_string[len(split_string) - 1]
+            if tag != "item":
+                return tag
+            else:
+                return split_string[len(split_string) - 2]

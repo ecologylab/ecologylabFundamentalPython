@@ -10,6 +10,7 @@ from serializer.json_serializer import JSONSimplSerializer
 from xml.sax import make_parser
 from xml.etree import ElementTree
 from deserializer.xml_deserializer import get_parser_from_file, SimplXmlDeserializer
+from sys import path
 
 if False:
     def createClass():
@@ -66,10 +67,11 @@ if False:
     print(prettify(xmlserializer.serialize()))
 
     scope = SimplTypesScope("JSON", "scope_test")
-    json_des = SimplJsonDeserializer(scope,"example.json")
-    json_des.parse()
+    xml_deserializer = SimplXmlDeserializer(scope, "example.xml")
+    xml_deserializer.parse()
+    obj = xml_deserializer.root
 
 scope = SimplTypesScope("JSON", "scope_test")
-xml_deserializer = SimplXmlDeserializer(scope, "example.xml")
-xml_deserializer.parse()
-obj = xml_deserializer.root
+json_des = SimplJsonDeserializer(scope,"example.json")
+json_des.parse()
+

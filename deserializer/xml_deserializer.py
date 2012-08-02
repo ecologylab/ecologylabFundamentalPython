@@ -18,10 +18,9 @@ def get_parser_from_file(filename):
 
 class SimplXmlDeserializer(PullDeserializer):
     def __init__(self, scope, input_file, deserializationHookStrategy = None):
-        super().__init__(scope, input_file)
+        super(SimplXmlDeserializer, self).__init__(scope, input_file)
         self.scope = scope
         self.root = None
-        self.stack = []
         self.is_collection_member = None
         self.is_composite = None
         self.current_collection = None
