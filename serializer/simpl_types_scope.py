@@ -134,10 +134,9 @@ class SimplTypesScope(object):
             return xml_deserializer.root
 
         if serialization_format == "JSON":
-            json_tree = deserialize_from_file(input_file)
-            json_des = SimplJsonDeserializer(self, json_tree)
-            json_des.start_deserialize()
-            return json_des.instance
+            json_des = SimplJsonDeserializer(self,input_file)
+            json_des.parse()
+            return json_des.root
 
     @classmethod
     def enableGraphSerialization():

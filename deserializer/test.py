@@ -74,4 +74,4 @@ if False:
 scope = SimplTypesScope("JSON", "scope_test")
 json_des = SimplJsonDeserializer(scope,"example.json")
 json_des.parse()
-
+root = json_des.root

@@ -37,7 +37,6 @@ class SimplJsonDeserializer(PullDeserializer):
         self.value = None
         self.current_field_descriptor = None
         self.deserializationHookStrategy = deserializationHookStrategy
-        self.isArray = False
         try:
             self.pull_events = deserialize_events_from_file(input_file)
         except IOError as e:
@@ -45,6 +44,10 @@ class SimplJsonDeserializer(PullDeserializer):
 
     def nextEvent(self):
         self.prefix, self.event, self.value = self.pull_events.next()
+    
+    def nextElement(self):
+        self.nextEvent()
+        self.nextEvent()
     
     def parse(self):
         self.nextEvent()
@@ -106,35 +109,88 @@ class SimplJsonDeserializer(PullDeserializer):
         setattr(parent, tag, subRoot)
         self.nextEvent()
     
-    def deserializeScalarCollection(self, parent, fd):
+    def deserializeCompositeMap(self, parent, fd):
         if hasattr(parent, fd.name):
-            current_list = getattr(parent, fd.name)
+            current_dict = getattr(parent, fd.name)
         else:
-            current_list = []
+            current_dict = {}
         self.current_collection = fd.name
-        #self.nextEvent()
         if fd.wrapped:
+            self.nextElement()
+        if self.isStartArray():
             self.nextEvent()
         tagName = self.getTagName()
         if not fd.isCollectionTag(tagName):
             self.ignoreTag(tagName)
         else:
             while fd.isCollectionTag(tagName):
-                if self.current_event != pulldom.START_ELEMENT:
+                if not self.isNewElement():
                     break
                 else:
-                    value = ""
-                    while self.current_event != pulldom.END_ELEMENT:
-                        if self.current_event == pulldom.CHARACTERS:
-                            value += self.current_node.wholeText
-                        self.nextEvent()
+                    child_tag_name = self.scope.findClassByFullName(fd.element_class)
+                    subRoot = self.getObjectModel(child_tag_name, tagName)
+                    key_fd = self.scope.classDescriptors[subRoot.simpl_tag_name].key_field
+                    current_dict[getattr(subRoot, key_fd.map_key)] = subRoot
+                    setattr(parent, fd.name, current_dict)
+                    self.nextEvent()
+                    tagName = self.getTagName()
+        if fd.wrapped:
+            self.nextEvent()
+    
+    def deserializeScalarMap(self, parent, fd):
+        if hasattr(parent, fd.name):
+            current_dict = getattr(parent, fd.name)
+        else:
+            current_dict = {}
+        self.current_collection = fd.name
+        if fd.wrapped:
+            self.nextElement()
+        if self.isStartArray():
+            self.nextEvent()
+        tagName = self.getTagName()
+        if not fd.isCollectionTag(tagName):
+            self.ignoreTag(tagName)
+        else:
+            while fd.isCollectionTag(tagName):
+                if not self.isNewElement():
+                    break
+                else:
+                    value = fd.getValue(self.value)
+                    # this is an implementation based on the key being equal to the value
+                    current_dict[value] = value
+                    setattr(parent, fd.name, current_dict)    
+                    self.nextEvent()
+                    tagName = self.getTagName() 
                     
-                    current_list.append(fd.getValue(value))
+        if fd.wrapped:
+            self.nextEvent()
+            
+    def deserializeScalarCollection(self, parent, fd):
+        if hasattr(parent, fd.name):
+            current_list = getattr(parent, fd.name)
+        else:
+            current_list = []
+        self.current_collection = fd.name
+        
+        if fd.wrapped:
+            self.nextElement()
+        if self.isStartArray():
+            self.nextEvent()
+        tagName = self.getTagName()
+        if not fd.isCollectionTag(tagName):
+            self.ignoreTag(tagName)
+        else:
+            while fd.isCollectionTag(tagName):
+                if self.isEndArray():
+                    self.nextEvent()
+                    break
+                else:
+                    current_list.append(fd.getValue(self.value))
                     setattr(parent, fd.name, current_list)    
                     self.nextEvent()
-                    tagName = self.getTagName()    
-            if fd.wrapped:
-                self.nextEvent()
+                    tagName = self.getTagName()
+        if fd.wrapped:
+            self.nextEvent()
             
     def deserializeCompositeCollection(self, parent, fd):
         if hasattr(parent, fd.name):
@@ -144,16 +200,15 @@ class SimplJsonDeserializer(PullDeserializer):
         self.current_collection = fd.name
 
         if fd.wrapped:
-            self.nextEvent()
+            self.nextElement()
         if self.isStartArray():
             self.nextEvent()
-            self.isArray = True
         tagName = self.getTagName()
         if not fd.isCollectionTag(tagName):
             self.ignoreTag(tagName)
         else:
             while fd.isCollectionTag(tagName):
-                if not self.isNewElement:
+                if not self.isNewElement():
                     break
                 else:
                     child_tag_name = self.scope.findClassByFullName(fd.element_class)
@@ -165,7 +220,6 @@ class SimplJsonDeserializer(PullDeserializer):
                     tagName = self.getTagName()
         if self.isEndArray():
             self.nextEvent()
-            self.isArray = False
         if fd.wrapped:
             self.nextEvent()
         
@@ -203,3 +257,8 @@ class SimplJsonDeserializer(PullDeserializer):
                 return tag
             else:
                 return split_string[len(split_string) - 2]
+    
+    def ignoreTag(self, tag):
+        while (not self.isEndElement()) or (not self.getTagName() == tag):
+            self.nextEvent()
+        self.nextEvent()

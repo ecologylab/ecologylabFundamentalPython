@@ -44,16 +44,16 @@ class mapsWithinMaps(unittest.TestCase):
             
             self.assertTrue(testing_utils.xml_compare(xmlelement, ElementTree.fromstring(expected_result)))
 
-if False:        
     def test_json_run(self):
-        json_text = deserialize_from_file("mapsWithinMaps.json")
-        print(json_text)
-
         simpl_object = self.scope.deserialize("mapsWithinMaps.json", "JSON")
-        json_element = self.scope.serialize(simpl_object, "JSON")
-        
-        print (json.dumps(json_element))
-        self.assertTrue(json_text, json.dumps(json_element))
+        if False:
+            json_text = deserialize_from_file("mapsWithinMaps.json")
+            print(json_text)
+    
+            json_element = self.scope.serialize(simpl_object, "JSON")
+            
+            print (json.dumps(json_element))
+            self.assertTrue(json_text, json.dumps(json_element))
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

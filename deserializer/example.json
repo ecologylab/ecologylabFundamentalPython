@@ -1,42 +1,34 @@
 {
-   "collection_of_circles":{
-      "circles":[
+   "translation_s":{
+      "class_descriptor":[
          {
-            "radius":"1",
-            "center":{
-               "x":"2",
-               "y":"3"
-            }
+            "tag_name":"cd1",
+            "field_descriptor":[
+               {
+                  "field_name":"fd3_cd1"
+               },
+               {
+                  "field_name":"fd2_cd1"
+               },
+               {
+                  "field_name":"fd1_cd1"
+               }
+            ]
          },
          {
-            "radius":"1",
-            "center":{
-               "x":"2",
-               "y":"4"
-            }
-         },
-         {
-            "radius":"1",
-            "center":{
-               "x":"2",
-               "y":"5"
-            }
-         },
-         {
-            "radius":"1",
-            "center":{
-               "x":"2",
-               "y":"6"
-            }
-         },
-         {
-            "radius":"1",
-            "center":{
-               "x":"2",
-               "y":"7"
-            }
+            "tag_name":"cd2",
+            "field_descriptor":[
+               {
+                  "field_name":"fd2_cd2"
+               },
+               {
+                  "field_name":"fd3_cd2"
+               },
+               {
+                  "field_name":"fd1_cd2"
+               }
+            ]
          }
-      ],
-      "yo":"1"
+      ]
    }
 }
