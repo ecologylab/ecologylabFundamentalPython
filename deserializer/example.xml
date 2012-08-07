@@ -1,13 +1,10 @@
-<?xml version="1.0" ?>
-<translation_s>
-  <class_descriptor tag_name="cd1">
-    <field_descriptor field_name="fd3_cd1"/>
-    <field_descriptor field_name="fd2_cd1"/>
-    <field_descriptor field_name="fd1_cd1"/>
-  </class_descriptor>
-  <class_descriptor tag_name="cd2">
-    <field_descriptor field_name="fd2_cd2"/>
-    <field_descriptor field_name="fd3_cd2"/>
-    <field_descriptor field_name="fd1_cd2"/>
-  </class_descriptor>
-</translation_s>
+<person_directory>
+  <persons>
+    <student name="nabeel" stu_num="234342"/>
+    <student name="yin" stu_num="423423"/>
+    <faculty designation="prof" name="andruid"/>
+    <student name="bill" stu_num="4234234"/>
+    <student name="sashi" stu_num="5454"/>
+    <student name="jon" stu_num="656565"/>
+  </persons>
+</person_directory>

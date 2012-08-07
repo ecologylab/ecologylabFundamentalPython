@@ -67,11 +67,11 @@ if False:
     print(prettify(xmlserializer.serialize()))
 
     scope = SimplTypesScope("JSON", "scope_test")
-    xml_deserializer = SimplXmlDeserializer(scope, "example.xml")
-    xml_deserializer.parse()
-    obj = xml_deserializer.root
+    json_des = SimplJsonDeserializer(scope,"example.json")
+    json_des.parse()
+    root = json_des.root
 
 scope = SimplTypesScope("JSON", "scope_test")
-json_des = SimplJsonDeserializer(scope,"example.json")
-json_des.parse()
-root = json_des.root
+xml_deserializer = SimplXmlDeserializer(scope, "example.xml")
+xml_deserializer.parse()
+obj = xml_deserializer.root

@@ -21,10 +21,10 @@ class FieldDescriptor(object):
         return False
 
     def isCollection(self):
-        if self.type == FieldType.MAP_ELEMENT or \
-            self.type == FieldType.MAP_SCALAR or \
-            self.type == FieldType.COLLECTION_ELEMENT or \
-            self.type == FieldType.COLLECTION_SCALAR:
+        if self.getType() == FieldType.MAP_ELEMENT or \
+            self.getType() == FieldType.MAP_SCALAR or \
+            self.getType() == FieldType.COLLECTION_ELEMENT or \
+            self.getType() == FieldType.COLLECTION_SCALAR:
             return True
         return False
 

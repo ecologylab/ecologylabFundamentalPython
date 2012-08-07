@@ -11,6 +11,6 @@ class ClassDescriptor(object):
     def __init__(self):
         self.fieldDescriptors = {}
         self.collectionFieldDescriptors = {}
-    
+        self.inheritedFieldDescriptors = []
     
         
