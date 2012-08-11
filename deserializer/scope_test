@@ -1,25 +1,25 @@
 {
    "simpl_types_scope":{
-      "name":"classATScope",
+      "name":"containerTScope",
       "class_descriptor":[
          {
-            "simpl.id":"31544005",
-            "name":"tests.graph.ClassB",
-            "tag_name":"class_b",
-            "described_class":"tests.graph.ClassB",
-            "described_class_simple_name":"ClassB",
-            "described_class_package_name":"tests.graph",
+            "simpl.id":"30936685",
+            "name":"tests.graph.collections.ClassA",
+            "tag_name":"class_a",
+            "described_class":"tests.graph.collections.ClassA",
+            "described_class_simple_name":"ClassA",
+            "described_class_package_name":"tests.graph.collections",
             "field_descriptor":[
                {
-                  "name":"a",
-                  "tag_name":"a",
-                  "field":"a",
+                  "name":"u",
+                  "tag_name":"u",
+                  "field":"u",
                   "type":"18",
                   "scalar_type":"int",
                   "xml_hint":"XML_ATTRIBUTE",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"31544005"
+                     "simpl.ref":"30936685"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -28,126 +28,15 @@
                   }
                },
                {
-                  "name":"b",
-                  "tag_name":"b",
-                  "field":"b",
+                  "name":"w",
+                  "tag_name":"w",
+                  "field":"w",
                   "type":"18",
                   "scalar_type":"int",
                   "xml_hint":"XML_ATTRIBUTE",
                   "field_type":"int",
                   "declaring_class_descriptor":{
-                     "simpl.ref":"31544005"
-                  },
-                  "library_namespaces":{
-                     "library_namespace":[
-
-                     ]
-                  }
-               },
-               {
-                  "name":"classA",
-                  "tag_name":"class_a",
-                  "field":"classA",
-                  "element_class":"tests.graph.ClassA",
-                  "type":"3",
-                  "composite_tag_name":"class_a",
-                  "field_type":"ClassA",
-                  "element_class_descriptor":{
-                     "simpl.id":"22743805",
-                     "name":"tests.graph.ClassA",
-                     "tag_name":"class_a",
-                     "described_class":"tests.graph.ClassA",
-                     "described_class_simple_name":"ClassA",
-                     "described_class_package_name":"tests.graph",
-                     "super_class":{
-                        "name":"java.lang.Object",
-                        "tag_name":"object",
-                        "described_class":"java.lang.Object",
-                        "described_class_simple_name":"Object",
-                        "described_class_package_name":"java.lang",
-                        "field_descriptor":[
-
-                        ]
-                     },
-                     "field_descriptor":[
-                        {
-                           "name":"x",
-                           "tag_name":"x",
-                           "field":"x",
-                           "type":"18",
-                           "scalar_type":"int",
-                           "xml_hint":"XML_ATTRIBUTE",
-                           "field_type":"int",
-                           "declaring_class_descriptor":{
-                              "simpl.ref":"22743805"
-                           },
-                           "library_namespaces":{
-                              "library_namespace":[
-
-                              ]
-                           }
-                        },
-                        {
-                           "name":"y",
-                           "tag_name":"y",
-                           "field":"y",
-                           "type":"18",
-                           "scalar_type":"int",
-                           "xml_hint":"XML_ATTRIBUTE",
-                           "field_type":"int",
-                           "declaring_class_descriptor":{
-                              "simpl.ref":"22743805"
-                           },
-                           "library_namespaces":{
-                              "library_namespace":[
-
-                              ]
-                           }
-                        },
-                        {
-                           "name":"classB",
-                           "tag_name":"class_b",
-                           "field":"classB",
-                           "element_class":"tests.graph.ClassB",
-                           "type":"3",
-                           "composite_tag_name":"class_b",
-                           "field_type":"ClassB",
-                           "element_class_descriptor":{
-                              "simpl.ref":"31544005"
-                           },
-                           "declaring_class_descriptor":{
-                              "simpl.ref":"22743805"
-                           },
-                           "library_namespaces":{
-                              "library_namespace":[
-
-                              ]
-                           }
-                        },
-                        {
-                           "name":"classA",
-                           "tag_name":"class_a",
-                           "field":"classA",
-                           "element_class":"tests.graph.ClassA",
-                           "type":"3",
-                           "composite_tag_name":"class_a",
-                           "field_type":"ClassA",
-                           "element_class_descriptor":{
-                              "simpl.ref":"22743805"
-                           },
-                           "declaring_class_descriptor":{
-                              "simpl.ref":"22743805"
-                           },
-                           "library_namespaces":{
-                              "library_namespace":[
-
-                              ]
-                           }
-                        }
-                     ]
-                  },
-                  "declaring_class_descriptor":{
-                     "simpl.ref":"31544005"
+                     "simpl.ref":"30936685"
                   },
                   "library_namespaces":{
                      "library_namespace":[
@@ -158,7 +47,37 @@
             ]
          },
          {
-            "simpl.ref":"22743805"
+            "simpl.id":"5143025",
+            "name":"tests.graph.collections.Container",
+            "tag_name":"container",
+            "described_class":"tests.graph.collections.Container",
+            "described_class_simple_name":"Container",
+            "described_class_package_name":"tests.graph.collections",
+            "field_descriptor":[
+               {
+                  "name":"aObjects",
+                  "tag_name":"a_objects",
+                  "field":"aObjects",
+                  "element_class":"tests.graph.collections.ClassA",
+                  "is_generic":"true",
+                  "type":"4",
+                  "collection_type":"simpl.types.collection.ArrayList",
+                  "collection_or_map_tag_name":"objectsA",
+                  "wrapped":"true",
+                  "field_type":"ArrayList",
+                  "element_class_descriptor":{
+                     "simpl.ref":"30936685"
+                  },
+                  "declaring_class_descriptor":{
+                     "simpl.ref":"5143025"
+                  },
+                  "library_namespaces":{
+                     "library_namespace":[
+
+                     ]
+                  }
+               }
+            ]
          }
       ]
    }

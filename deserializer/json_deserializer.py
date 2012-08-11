@@ -47,13 +47,6 @@ class SimplJsonDeserializer(PullDeserializer):
     def nextEvent(self):
         self.prefix, self.event, self.value = self.pull_events.next()
     
-    def nextElement(self):
-        tag = self.getTagName()
-        while (self.isNewElement()) and (tag == self.getTagName()):
-            self.nextEvent()
-            
-        
-    
     def parse(self):
         self.nextEvent()
         if self.isStartDocument():
@@ -89,7 +82,9 @@ class SimplJsonDeserializer(PullDeserializer):
                     self.deserializedSimplIds[self.value] = root
                     self.nextEvent()
                 else:
-                    return self.deserializedSimplIds[self.value]
+                    simpl_id = self.value
+                    self.nextEvent()
+                    return self.deserializedSimplIds[simpl_id]
             else:
                 self.current_field_descriptor = self.scope.getFileDescriptorFromTag(tag, name)
                 if self.current_field_descriptor.getType() == FieldType.SCALAR:

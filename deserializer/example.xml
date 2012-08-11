@@ -1,7 +1,20 @@
 <?xml version="1.0" ?>
-<class_a simpl:id="22618484" x="1" xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html" y="2">
-  <class_b a="3" b="4">
-    <class_a simpl:ref="22618484"/>
-  </class_b>
-  <class_a simpl:ref="22618484"/>
-</class_a>
+<container xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html">
+  <a_objects>
+    <objectsA simpl:id="29992592" u="55" w="54"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA simpl:ref="29992592"/>
+    <objectsA u="55" w="54"/>
+    <objectsA u="55" w="54"/>
+  </a_objects>
+</container>
