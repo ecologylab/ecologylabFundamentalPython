@@ -133,7 +133,12 @@ class SimplTypesScope(object):
             else:
                 fieldDescriptor.wrapped = False
             fieldDescriptor.is_generic = fd['is_generic']
-            fieldDescriptor.collection_tag_name = fd['collection_or_map_tag_name']
+            if fd['collection_or_map_tag_name'] != "":
+                fieldDescriptor.collection_tag_name = fd['collection_or_map_tag_name']
+            else:
+                fieldDescriptor.collection_tag_name = fieldDescriptor.tagName
+            if 'scalar_type' in fd:
+                fieldDescriptor.scalar_type = fd['scalar_type']
             if 'element_class_descriptor' in fd:
                 elementClassDescriptor = fd['element_class_descriptor']
                 if 'simpl.id' in elementClassDescriptor:

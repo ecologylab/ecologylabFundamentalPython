@@ -24,6 +24,7 @@ class SimplXmlDeserializer(PullDeserializer):
         self.is_collection_member = None
         self.is_composite = None
         self.current_collection = None
+        self.current_collection_fd = None
         self.is_xml_leaf = None
         self.current_event = None
         self.current_node = None
@@ -136,17 +137,21 @@ class SimplXmlDeserializer(PullDeserializer):
         else:
             current_dict = {}
         self.current_collection = fd.name
+        self.current_collection_fd = fd
         if fd.wrapped:
             self.nextEvent()
         tagName = self.getTagName()
-        if not fd.isCollectionTag(tagName):
+        if not fd.isCollectionTag(tagName, self.current_collection_fd):
             self.ignoreTag(tagName)
         else:
-            while fd.isCollectionTag(tagName):
+            while fd.isCollectionTag(tagName, self.current_collection_fd):
                 if self.current_event != pulldom.START_ELEMENT:
                     break
                 else:
-                    child_tag_name = self.scope.findClassByFullName(fd.element_class)
+                    if fd.isPolymorphicField(tagName, self.current_collection_fd):
+                        child_tag_name = tagName
+                    else:
+                        child_tag_name = self.scope.findClassByFullName(fd.element_class)
                     subRoot = self.getObjectModel(child_tag_name, tagName)
                     key_fd = self.scope.classDescriptors[subRoot.simpl_tag_name].key_field
                     current_dict[getattr(subRoot, key_fd.map_key)] = subRoot
@@ -162,14 +167,15 @@ class SimplXmlDeserializer(PullDeserializer):
         else:
             current_dict = {}
         self.current_collection = fd.name
-        #self.nextEvent()
+        self.current_collection_fd = fd
+        
         if fd.wrapped:
             self.nextEvent()
         tagName = self.getTagName()
-        if not fd.isCollectionTag(tagName):
+        if not fd.isCollectionTag(tagName, self.current_collection_fd):
             self.ignoreTag(tagName)
         else:
-            while fd.isCollectionTag(tagName):
+            while fd.isCollectionTag(tagName, self.current_collection_fd):
                 if self.current_event != pulldom.START_ELEMENT:
                     break
                 else:
@@ -193,14 +199,15 @@ class SimplXmlDeserializer(PullDeserializer):
         else:
             current_list = []
         self.current_collection = fd.name
-        #self.nextEvent()
+        self.current_collection_fd = fd
+        
         if fd.wrapped:
             self.nextEvent()
         tagName = self.getTagName()
-        if not fd.isCollectionTag(tagName):
+        if not fd.isCollectionTag(tagName, self.current_collection_fd):
             self.ignoreTag(tagName)
         else:
-            while fd.isCollectionTag(tagName):
+            while fd.isCollectionTag(tagName, self.current_collection_fd):
                 if self.current_event != pulldom.START_ELEMENT:
                     break
                 else:
@@ -223,18 +230,22 @@ class SimplXmlDeserializer(PullDeserializer):
         else:
             current_list = []
         self.current_collection = fd.name
-
+        self.current_collection_fd = fd
+        
         if fd.wrapped:
             self.nextEvent()
         tagName = self.getTagName()
-        if not fd.isCollectionTag(tagName):
+        if not fd.isCollectionTag(tagName, self.current_collection_fd):
             self.ignoreTag(tagName)
         else:
-            while fd.isCollectionTag(tagName):
+            while fd.isCollectionTag(tagName, self.current_collection_fd):
                 if self.current_event != pulldom.START_ELEMENT:
                     break
                 else:
-                    child_tag_name = self.scope.findClassByFullName(fd.element_class)
+                    if fd.isPolymorphicField(tagName, self.current_collection_fd):
+                        child_tag_name = tagName
+                    else:
+                        child_tag_name = self.scope.findClassByFullName(fd.element_class)
                     subRoot = self.getObjectModel(child_tag_name, tagName)
                     current_list.append(subRoot)
                     setattr(parent, fd.name, current_list)

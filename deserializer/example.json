@@ -1,33 +1,41 @@
 {
-   "translation_s":{
-      "class_descriptor":[
+   "person_directory":{
+      "persons":[
          {
-            "tag_name":"cd1",
-            "field_descriptor":[
-               {
-                  "field_name":"fd3_cd1"
-               },
-               {
-                  "field_name":"fd2_cd1"
-               },
-               {
-                  "field_name":"fd1_cd1"
-               }
-            ]
+            "student":{
+               "name":"nabeel",
+               "stu_num":"234342"
+            }
          },
          {
-            "tag_name":"cd2",
-            "field_descriptor":[
-               {
-                  "field_name":"fd2_cd2"
-               },
-               {
-                  "field_name":"fd3_cd2"
-               },
-               {
-                  "field_name":"fd1_cd2"
-               }
-            ]
+            "student":{
+               "name":"yin",
+               "stu_num":"423423"
+            }
+         },
+         {
+            "faculty":{
+               "name":"andruid",
+               "designation":"prof"
+            }
+         },
+         {
+            "student":{
+               "name":"bill",
+               "stu_num":"4234234"
+            }
+         },
+         {
+            "student":{
+               "name":"sashi",
+               "stu_num":"5454"
+            }
+         },
+         {
+            "student":{
+               "name":"jon",
+               "stu_num":"656565"
+            }
          }
       ]
    }

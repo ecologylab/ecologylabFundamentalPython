@@ -37,12 +37,22 @@ class FieldDescriptor(object):
     def getType(self):
         return int(self.type)
 
-    def isCollectionTag(self, tagName):
-        if hasattr(self, "collection_tag_name"):
+    def isCollectionTag(self, tagName, current_collection_fd):
+        if self.isPolymorphicField(tagName, current_collection_fd):
+            return True
+        elif hasattr(self, "collection_tag_name"):
             return tagName == self.collection_tag_name
-        else:
+    
+    def isPolymorphicField(self, tagName, current_collection_fd):
+        if hasattr(current_collection_fd, "polymorph_classes"):
+            for cd in current_collection_fd.polymorph_classes:
+                if cd.tagName == tagName:
+                    return True
             return False
         
+    def isPolymorphicCollection(self):
+        return hasattr(self, "polymorph_classes")
+    
     def getValue(self, textValue):
         if hasattr(self, "scalar_type"):
             if self.scalar_type == "Integer" or self.scalar_type == "int":
