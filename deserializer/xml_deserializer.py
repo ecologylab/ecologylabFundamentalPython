@@ -29,6 +29,7 @@ class SimplXmlDeserializer(PullDeserializer):
         self.current_event = None
         self.current_node = None
         self.current_field_descriptor = None
+        self.deserializedSimplIds = {}
         self.deserializationHookStrategy = deserializationHookStrategy
         try:
             self.pull_events = get_parser_from_file(input_file)
@@ -66,7 +67,7 @@ class SimplXmlDeserializer(PullDeserializer):
         root = getClassInstance(class_name)
         setattr(root, "simpl_tag_name", class_descriptor.tagName)
         attrs = self.current_node.attributes
-        self.deserializeAttributes(root, attrs, class_descriptor)
+        root = self.deserializeAttributes(root, attrs, class_descriptor)
         self.nextEvent()
         self.xmlText = ""
 
@@ -108,12 +109,17 @@ class SimplXmlDeserializer(PullDeserializer):
             for key, value in attrs.items():
                 if key == "xmlns:simpl":
                     continue
-                fd = class_descriptor.fieldDescriptors[key];
-                if fd.isScalarTag():
-                    print("just set attr " + fd.name + ", with the value " + value)
-                    setattr(root, fd.name, fd.getValue(value))
-
-
+                if key == "simpl:ref":
+                    return self.deserializedSimplIds[value]
+                elif key == "simpl:id":
+                    self.deserializedSimplIds[value] = root
+                else:
+                    fd = class_descriptor.fieldDescriptors[key];
+                    if fd.isScalarTag():
+                        print("just set attr " + fd.name + ", with the value " + value)
+                        setattr(root, fd.name, fd.getValue(value))   
+        return root
+    
     def deserializeScalar(self, parent, fd):
         value = ""
         while self.current_event != pulldom.END_ELEMENT:

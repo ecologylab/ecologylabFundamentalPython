@@ -37,6 +37,7 @@ class SimplJsonDeserializer(PullDeserializer):
         self.event = None
         self.value = None
         self.current_field_descriptor = None
+        self.deserializedSimplIds = {}
         self.deserializationHookStrategy = deserializationHookStrategy
         try:
             self.pull_events = deserialize_events_from_file(input_file)
@@ -83,25 +84,34 @@ class SimplJsonDeserializer(PullDeserializer):
                 self.nextEvent()
             tag = self.value
             self.nextEvent()
-
-            self.current_field_descriptor = self.scope.getFileDescriptorFromTag(tag, name)
-            if self.current_field_descriptor.getType() == FieldType.SCALAR:
-                self.deserializeScalar(root, self.current_field_descriptor)
-            elif self.current_field_descriptor.getType() == FieldType.COMPOSITE_ELEMENT:
-                self.deserializeComposite(root, self.current_field_descriptor)
-            elif self.current_field_descriptor.getType() == FieldType.COLLECTION_ELEMENT:
-                self.deserializeCompositeCollection(root, self.current_field_descriptor)
-            elif self.current_field_descriptor.getType() == FieldType.COLLECTION_SCALAR:
-                self.deserializeScalarCollection(root, self.current_field_descriptor)
-            elif self.current_field_descriptor.getType() == FieldType.MAP_ELEMENT:
-                self.deserializeCompositeMap(root, self.current_field_descriptor)
-            elif self.current_field_descriptor.getType() == FieldType.MAP_SCALAR:
-                self.deserializeScalarMap(root, self.current_field_descriptor)
-                
+            if self.isGraphTag(tag):
+                if tag == "simpl.id":
+                    self.deserializedSimplIds[self.value] = root
+                    self.nextEvent()
+                else:
+                    return self.deserializedSimplIds[self.value]
             else:
-                self.nextEvent()
+                self.current_field_descriptor = self.scope.getFileDescriptorFromTag(tag, name)
+                if self.current_field_descriptor.getType() == FieldType.SCALAR:
+                    self.deserializeScalar(root, self.current_field_descriptor)
+                elif self.current_field_descriptor.getType() == FieldType.COMPOSITE_ELEMENT:
+                    self.deserializeComposite(root, self.current_field_descriptor)
+                elif self.current_field_descriptor.getType() == FieldType.COLLECTION_ELEMENT:
+                    self.deserializeCompositeCollection(root, self.current_field_descriptor)
+                elif self.current_field_descriptor.getType() == FieldType.COLLECTION_SCALAR:
+                    self.deserializeScalarCollection(root, self.current_field_descriptor)
+                elif self.current_field_descriptor.getType() == FieldType.MAP_ELEMENT:
+                    self.deserializeCompositeMap(root, self.current_field_descriptor)
+                elif self.current_field_descriptor.getType() == FieldType.MAP_SCALAR:
+                    self.deserializeScalarMap(root, self.current_field_descriptor)
+                    
+                else:
+                    self.nextEvent()
         return root
 
+    def isGraphTag(self, tag):
+        return tag == "simpl.id" or tag == "simpl.ref"
+    
     def deserializeScalar(self, parent, fd):
         setattr(parent, fd.name, fd.getValue(self.value))
         self.nextEvent()

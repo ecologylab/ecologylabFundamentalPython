@@ -1,10 +1,7 @@
-<person_directory>
-  <persons>
-    <student name="nabeel" stu_num="234342"/>
-    <student name="yin" stu_num="423423"/>
-    <faculty designation="prof" name="andruid"/>
-    <student name="bill" stu_num="4234234"/>
-    <student name="sashi" stu_num="5454"/>
-    <student name="jon" stu_num="656565"/>
-  </persons>
-</person_directory>
+<?xml version="1.0" ?>
+<class_a simpl:id="22618484" x="1" xmlns:simpl="http://ecologylab.net/research/simplGuide/serialization/index.html" y="2">
+  <class_b a="3" b="4">
+    <class_a simpl:ref="22618484"/>
+  </class_b>
+  <class_a simpl:ref="22618484"/>
+</class_a>
