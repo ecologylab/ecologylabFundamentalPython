@@ -37,7 +37,10 @@ class JSONSimplSerializer:
         collection_dict[fd.collection_tag_name] = []
         children = getattr(self.simpl_object, fd.name)
         for child in children:
-            collection_dict[fd.collection_tag_name].append(self.serializeInDepth(child))
+            if fd.getType() == FieldType.COLLECTION_ELEMENT:
+                collection_dict[fd.collection_tag_name].append(self.serializeInDepth(child))
+            if fd.getType() == FieldType.COLLECTION_SCALAR:
+                collection_dict[fd.collection_tag_name].append(str(child))
         if fd.isWrappedCollection():
             new_dict[fd.tagName] = collection_dict
         else:

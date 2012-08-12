@@ -6,6 +6,7 @@ Created on 23.06.2012
 from xml.etree.ElementTree import Element, tostring
 from serializer import class_descriptor
 from xml.dom import minidom
+from deserializer.field_type import FieldType
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
@@ -45,14 +46,24 @@ class XmlSimplSerializer:
                 elif fd.simpl_type == "composite":
                     xml_element.append(self.serializeInDepth(getattr(simpl_object, fd.name), fd.name))
                 elif fd.simpl_type == "collection":
-                    if hasattr(simpl_object, fd.name):
-                        collection_list = getattr(simpl_object, fd.name)
-                        for item in collection_list:
-                            xml_element.append(self.serializeInDepth(item, fd.collection_tag_name))
-        
-        def serializeCollection(self, fd):
-        
+                    xml_element = self.serializeCollection(fd, xml_element)
         return xml_element
     
+    def serializeCollection(self, fd, xml_element):
+        if fd.isWrappedCollection():
+            new_elem = Element(fd.tagName)
+        else:
+            new_elem = xml_element
+        if hasattr(self.simpl_object, fd.name):
+            collection_list = getattr(self.simpl_object, fd.name)
+            for item in collection_list:
+                if fd.getType() == FieldType.COLLECTION_ELEMENT:
+                    new_elem.append(self.serializeInDepth(item, fd.collection_tag_name))
+                if fd.getType() == FieldType.COLLECTION_SCALAR:
+                    new_elem.append(str(item))
+        if fd.isWrappedCollection():
+            xml_element.append(new_elem)
+        return xml_element
+        
     def toString(self):
         return tostring(self.top)

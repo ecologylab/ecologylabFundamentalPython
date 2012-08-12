@@ -13,6 +13,3 @@ def createClass(class_name):
 
 def getClassInstance(class_name):
     return globals()[class_name]()
-
-def enum(**enums):
-    return type('Enum', (), enums)

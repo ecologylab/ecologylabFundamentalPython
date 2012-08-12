@@ -4,7 +4,7 @@ Created on 15.07.2012
 @author: cristi
 '''
 
-from deserializer.deserializer_utils import enum
+from utils.general_utils import enum
 
 FieldType=enum(UNSET_TYPE=-999,
                 BAD_FIELD=-99,

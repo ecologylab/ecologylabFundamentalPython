@@ -42,7 +42,7 @@ class collectionOfCircles(unittest.TestCase):
         print(expected_result)
         
         self.assertTrue(testing_utils.xml_compare(xmlelement, ElementTree.fromstring(expected_result)))
-        
+
     def test_json_run(self):
         simpl_object = self.scope.deserialize("collectionOfCircles.json", "JSON")
         json_text = deserialize_from_file("collectionOfCircles.json")
