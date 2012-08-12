@@ -4,7 +4,6 @@ Created on 09.06.2012
 @author: cristi
 '''
 import json
-#from serializer.simpl_types_scope import SimplTypesScope
 from deserializer.deserializer_utils import *
 from deserializer.pull_deserializer import PullDeserializer
 from ijson import items, parse
@@ -27,6 +26,21 @@ def deserialize_events_from_file(filename):
     return iter(parse(json_file))
 
 class SimplJsonDeserializer(PullDeserializer):
+    '''
+    JSON Deserializer class for SIMPL objects
+    
+    uses the ijson python library, a pull parser for JSON
+    To deserialize a S.IM.PL object:
+    1. instantiate the class with the simplTypesScope instance and the input json file as parameters
+    2. call parse
+    3. the resulted object is returned in the class's root element
+    
+    Another way to use the deserializer is by calling the deserialize method of the
+    simplTypesScope instance, giving the input file as parameter:
+    
+    exp: scope.deserialize("input.json", "JSON")
+    '''
+    
     def __init__(self, scope, input_file, deserializationHookStrategy = None):
         super(SimplJsonDeserializer, self).__init__(scope, input_file)
         self.scope = scope

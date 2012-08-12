@@ -36,12 +36,12 @@ class XmlSimplSerializer:
                     if (hasattr(fd, "xml_hint")):
                         if (fd.xml_hint == "XML_LEAF"):
                             child = Element(fd.tagName)
-                            child.text = getattr(simpl_object, fd.name)
+                            child.text = str(getattr(simpl_object, fd.name))
                             xml_element.append(child)
                         if (fd.xml_hint == "XML_ATTRIBUTE"):
-                            xml_element.set(fd.tagName, getattr(simpl_object, fd.name))
+                            xml_element.set(fd.tagName, str(getattr(simpl_object, fd.name)))
                     else:
-                        xml_element.set(fd.tagName, getattr(simpl_object, fd.name))
+                        xml_element.set(fd.tagName, str(getattr(simpl_object, fd.name)))
                 elif fd.simpl_type == "composite":
                     xml_element.append(self.serializeInDepth(getattr(simpl_object, fd.name), fd.name))
                 elif fd.simpl_type == "collection":

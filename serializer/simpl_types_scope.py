@@ -33,7 +33,7 @@ class SimplTypesScope(object):
 
         for cd in root['class_descriptor']:
             self.parseRoot(cd)
-        self.resolveDependencies()
+        self.resolveGraphReferences()
         
     def parseRoot(self, cd):
         print(cd)
@@ -92,7 +92,7 @@ class SimplTypesScope(object):
             self.simplIdToObject[cd['simpl.id']] = classDescriptor
 
 
-    def resolveDependencies(self):
+    def resolveGraphReferences(self):
         for cd_key in self.classDescriptors:
             cd = self.classDescriptors[cd_key];
             for fd_key in cd.fieldDescriptors:
@@ -116,6 +116,7 @@ class SimplTypesScope(object):
                 cd.fieldDescriptors[fd.tagName] = fd
                 if fd.isCollection():
                     cd.collectionFieldDescriptors[fd.collection_tag_name] = fd        
+                    
     def setFieldDescriptorType(self, fieldDescriptor, fd):
         if fieldDescriptor.getType() == FieldType.SCALAR:
                 fieldDescriptor.scalar_type = fd['scalar_type']
@@ -197,6 +198,6 @@ class SimplTypesScope(object):
 if __name__ == '__main__':
 
     scope = SimplTypesScope("JSON", "sample_typesscope")
-    print(scope.classDescriptors)
+    #print(scope.classDescriptors)
 
-    print(scope.simplIdToObject)
+    #print(scope.simplIdToObject)

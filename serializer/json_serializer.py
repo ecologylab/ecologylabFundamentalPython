@@ -25,9 +25,9 @@ class JSONSimplSerializer:
             fd = class_descriptor.fieldDescriptors[fd_key]
             if hasattr(simpl_object, fd.name):
                 if fd.simpl_type == "scalar":
-                    new_dict[fd.tagName] = getattr(simpl_object, fd.name)
+                    new_dict[str(fd.tagName)] = str(getattr(simpl_object, fd.name))
                 if fd.simpl_type == "composite":
-                    new_dict[fd.tagName] = self.serializeInDepth(getattr(simpl_object, fd.name))
+                    new_dict[str(fd.tagName)] = self.serializeInDepth(getattr(simpl_object, fd.name))
                 if fd.simpl_type == "collection":
                     collection_dict = dict()
                     collection_dict[fd.collection_tag_name] = []

@@ -17,6 +17,21 @@ def get_parser_from_file(filename):
     return pulldom.parse(xml_file)
 
 class SimplXmlDeserializer(PullDeserializer):
+    '''
+    XML Deserializer class for SIMPL objects
+    
+    uses the xml.dom.pulldom pull deserializer
+    To deserialize a S.IM.PL object:
+    1. instantiate the class with the simplTypesScope instance and the input XML file as parameters
+    2. call parse
+    3. the resulted object is returned in the class's root element
+    
+    Another way to use the deserializer is by calling the deserialize method of the
+    simplTypesScope instance, giving the input file as parameter:
+    
+    exp: scope.deserialize("input.xml", "XML")
+    '''
+    
     def __init__(self, scope, input_file, deserializationHookStrategy = None):
         super(SimplXmlDeserializer, self).__init__(scope, input_file)
         self.scope = scope
