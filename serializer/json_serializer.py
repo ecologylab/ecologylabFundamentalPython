@@ -29,12 +29,19 @@ class JSONSimplSerializer:
                 if fd.simpl_type == "composite":
                     new_dict[str(fd.tagName)] = self.serializeInDepth(getattr(simpl_object, fd.name))
                 if fd.simpl_type == "collection":
-                    collection_dict = dict()
-                    collection_dict[fd.collection_tag_name] = []
-                    children = getattr(simpl_object, fd.name)
-                    for child in children:
-                        collection_dict[fd.collection_tag_name].append(self.serializeInDepth(child))
-                    new_dict[fd.tagName] = collection_dict
+                    new_dict = self.serializeCollection(fd, new_dict)
+        return new_dict
+    
+    def serializeCollection(self, fd, new_dict):
+        collection_dict = dict()
+        collection_dict[fd.collection_tag_name] = []
+        children = getattr(self.simpl_object, fd.name)
+        for child in children:
+            collection_dict[fd.collection_tag_name].append(self.serializeInDepth(child))
+        if fd.isWrappedCollection():
+            new_dict[fd.tagName] = collection_dict
+        else:
+            new_dict[fd.collection_tag_name] = collection_dict[fd.collection_tag_name]
         return new_dict
     
     def toString(self):

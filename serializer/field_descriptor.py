@@ -53,6 +53,12 @@ class FieldDescriptor(object):
     def isPolymorphicCollection(self):
         return hasattr(self, "polymorph_classes")
     
+    def isWrappedCollection(self):
+        if hasattr(self, "wrapped"):
+            return self.wrapped == True
+        else:
+            return False
+    
     def getValue(self, textValue):
         if hasattr(self, "scalar_type"):
             if self.scalar_type == "Integer" or self.scalar_type == "int":

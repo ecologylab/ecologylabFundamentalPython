@@ -49,7 +49,8 @@ class XmlSimplSerializer:
                         collection_list = getattr(simpl_object, fd.name)
                         for item in collection_list:
                             xml_element.append(self.serializeInDepth(item, fd.collection_tag_name))
-
+        
+        def serializeCollection(self, fd):
         
         return xml_element
     
