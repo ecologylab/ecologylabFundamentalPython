@@ -4,7 +4,7 @@ Created on 04.07.2012
 @author: cristi
 '''
 import json
-#from serializer.simpl_types_scope import SimplTypesScope
+from deserializer.field_type import FieldType
 
 class JSONSimplSerializer:
     def __init__(self, simpl_object, simpl_types_scope):

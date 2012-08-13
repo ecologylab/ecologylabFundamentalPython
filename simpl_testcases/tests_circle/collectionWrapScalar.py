@@ -21,6 +21,8 @@ from serializer.xml_serializer import prettify
 from deserializer.json_deserializer import deserialize_from_file
 from simpl_testcases.tests import testing_utils
 from xml.etree import ElementTree
+from utils.format import Format
+
 import json
 
 class collectionWrapScalar(unittest.TestCase):
@@ -29,14 +31,14 @@ class collectionWrapScalar(unittest.TestCase):
     '''
 
     def setUp(self):
-        self.scope = SimplTypesScope("JSON", "collectionWrapScalar_scope")
-        fileReader = open("collectionOfCircles.xml", "r")
+        self.scope = SimplTypesScope(Format.JSON, "collectionWrapScalar_scope")
+        fileReader = open("collectionWrapScalar.xml", "r")
         self.pointXMLResult = fileReader.read()
         fileReader.close()
                 
     def test_xml_run(self):
-        simpl_object = self.scope.deserialize("collectionWrapScalar.xml", "XML")
-        xmlelement = self.scope.serialize(simpl_object, "XML")
+        simpl_object = self.scope.deserialize("collectionWrapScalar.xml", Format.XML)
+        xmlelement = self.scope.serialize(simpl_object, Format.XML)
         print(prettify(xmlelement))
         
         expected_result = self.pointXMLResult
@@ -45,10 +47,10 @@ class collectionWrapScalar(unittest.TestCase):
         self.assertTrue(testing_utils.xml_compare(xmlelement, ElementTree.fromstring(expected_result)))
 if False:
     def test_json_run(self):
-        simpl_object = self.scope.deserialize("collectionWrapScalar.json", "JSON")
+        simpl_object = self.scope.deserialize("collectionWrapScalar.json", Format.JSON)
         json_text = deserialize_from_file("collectionWrapScalar.json")
         print(json_text)
-        json_element = self.scope.serialize(simpl_object, "JSON")
+        json_element = self.scope.serialize(simpl_object, Format.JSON)
         print (json.dumps(json_element))
         self.assertTrue(json_text, json.dumps(json_element))
         

@@ -60,10 +60,15 @@ class XmlSimplSerializer:
                 if fd.getType() == FieldType.COLLECTION_ELEMENT:
                     new_elem.append(self.serializeInDepth(item, fd.collection_tag_name))
                 if fd.getType() == FieldType.COLLECTION_SCALAR:
-                    new_elem.append(str(item))
+                    new_elem.append(self.newStringElement(fd.collection_tag_name, str(item)))
         if fd.isWrappedCollection():
             xml_element.append(new_elem)
         return xml_element
         
+    def newStringElement(self, tag, content):
+        new_elem = Element(tag)
+        new_elem.text = content
+        return new_elem
+    
     def toString(self):
         return tostring(self.top)

@@ -11,17 +11,18 @@ from deserializer.json_deserializer import deserialize_from_file
 from simpl_testcases.tests import testing_utils
 from xml.etree import ElementTree
 from xml.etree.ElementTree import tostring
+from utils.format import Format
 import json
 
 class Point(unittest.TestCase):
 
     def setUp(self):
-        self.scope = SimplTypesScope("JSON", "circle_scope")
+        self.scope = SimplTypesScope(Format.JSON, "circle_scope")
         self.pointXMLResult = open("point.xml", "r").read()
         
     def test_xml_run(self):
-        simpl_object = self.scope.deserialize("point.xml", "XML")
-        xmlelement = self.scope.serialize(simpl_object, "XML")
+        simpl_object = self.scope.deserialize("point.xml", Format.XML)
+        xmlelement = self.scope.serialize(simpl_object, Format.XML)
         print(prettify(xmlelement))
         
         expected_result = self.pointXMLResult
@@ -30,10 +31,10 @@ class Point(unittest.TestCase):
         self.assertTrue(testing_utils.xml_compare(xmlelement, ElementTree.fromstring(expected_result)))
 
     def test_json_run(self):
-        simpl_object = self.scope.deserialize("point.json", "JSON")
+        simpl_object = self.scope.deserialize("point.json", Format.JSON)
         json_text = deserialize_from_file("point.json")
         print(json_text)
-        json_element = self.scope.serialize(simpl_object, "JSON")
+        json_element = self.scope.serialize(simpl_object, Format.JSON)
         
         print (json.dumps(json_element))
         self.assertTrue(json_text, json.dumps(json_element))

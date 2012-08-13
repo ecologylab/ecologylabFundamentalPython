@@ -7,7 +7,7 @@ Created on 04.06.2012
 from deserializer.json_deserializer import *
 from serializer.class_descriptor import ClassDescriptor
 from serializer.field_descriptor import FieldDescriptor
-from constants import format
+from utils.format import Format
 from serializer.xml_serializer import XmlSimplSerializer
 from serializer.json_serializer import *
 from deserializer.xml_deserializer import *
@@ -18,11 +18,12 @@ class SimplTypesScope(object):
     classdocs
     '''
     def __init__(self, format, serializedScopeFile):
-        if format == "JSON":
+        if format == Format.JSON:
             self.initializeFromJSON(serializedScopeFile)
-        if format == "XML":
+        if format == Format.XML:
             self.initializeFromXML(serializedScopeFile)
-
+        self.graphSerialization = False;
+        
     def initializeFromJSON(self, serializedScopeFile):
         jsonScope = deserialize_from_file(serializedScopeFile)
         root = jsonScope['simpl_types_scope']
@@ -172,28 +173,28 @@ class SimplTypesScope(object):
 
 
     def serialize(self, obj, serialization_format):
-        if serialization_format == "XML":
+        if serialization_format == Format.XML:
             xmlserializer = XmlSimplSerializer(obj, self)
             return xmlserializer.serialize()
-        if serialization_format == "JSON":
+        if serialization_format == Format.JSON:
             serializer = JSONSimplSerializer(obj, self)
             return serializer.serialize()
 
 
     def deserialize(self, input_file, serialization_format):
-        if serialization_format == "XML":
+        if serialization_format == Format.XML:
             xml_deserializer = SimplXmlDeserializer(self, input_file)
             xml_deserializer.parse()
             return xml_deserializer.root
 
-        if serialization_format == "JSON":
+        if serialization_format == Format.JSON:
             json_des = SimplJsonDeserializer(self,input_file)
             json_des.parse()
             return json_des.root
 
     @classmethod
     def enableGraphSerialization():
-        pass
+        self.graphSerialization = True
 
 if __name__ == '__main__':
 
