@@ -7,25 +7,32 @@ Created on 04.06.2012
 from deserializer.json_deserializer import *
 from serializer.class_descriptor import ClassDescriptor
 from serializer.field_descriptor import FieldDescriptor
-from utils.format import Format
+from utils.format import *
 from serializer.xml_serializer import XmlSimplSerializer
 from serializer.json_serializer import *
 from deserializer.xml_deserializer import *
 from serializer import class_descriptor
+from utils.user_exceptions import *
+from utils.deserializer_utils import *
 
 class SimplTypesScope(object):
     '''
     classdocs
     '''
-    def __init__(self, format, serializedScopeFile):
+    def __init__(self, format, serializedScope, inputType = None):
+        if inputType == None or inputType == InputType.FILE:
+            input_file = open(serializedScope, "r")
+            data_string = input_file.read()
+        else:
+            data_string = serializedScope
         if format == Format.JSON:
-            self.initializeFromJSON(serializedScopeFile)
+            self.initializeFromJSON(data_string)
         if format == Format.XML:
-            self.initializeFromXML(serializedScopeFile)
+            self.initializeFromXML(data_string)
         self.graphSerialization = False;
         
-    def initializeFromJSON(self, serializedScopeFile):
-        jsonScope = deserialize_from_file(serializedScopeFile)
+    def initializeFromJSON(self, serializedScope):
+        jsonScope = deserialize_from_string(serializedScope)
         root = jsonScope['simpl_types_scope']
         self.name = root['name']
 
@@ -102,18 +109,27 @@ class SimplTypesScope(object):
                     fd.declaring_class = self.simplIdToObject[fd.declaring_class['simpl.ref']]
                 if hasattr(fd, "super_class"):
                     if 'simpl_ref' in fd.super_class:
-                        fd.super_class = self.simplIdToObject[fd.super_class['simpl.ref']]
+                        try:
+                            fd.super_class = self.simplIdToObject[fd.super_class['simpl.ref']]
+                        except KeyError:
+                            raise SimplIDNotFound("class not defined in the SimplTypesScope")
                 if hasattr(fd, "polymorph_classes"):
                     index = 0;
                     for polymorph_class in fd.polymorph_classes:
                         if (not type(polymorph_class) is ClassDescriptor) and 'simpl.ref' in polymorph_class:
-                            fd.polymorph_classes[index] = self.simplIdToObject[polymorph_class['simpl.ref']]
+                            try:
+                                fd.polymorph_classes[index] = self.simplIdToObject[polymorph_class['simpl.ref']]
+                            except KeyError:
+                                raise SimplIDNotFound("class not defined in the SimplTypesScope")
                         index += 1
         
         for cd_key in self.classDescriptors:
             cd = self.classDescriptors[cd_key]
             for fd_ref in cd.inheritedFieldDescriptors:
-                fd = self.simplIdToObject[fd_ref]
+                try:
+                    fd = self.simplIdToObject[fd_ref]
+                except KeyError:
+                    raise SimplIDNotFound("Field Descriptor not defined in the SimplTypesScope")
                 cd.fieldDescriptors[fd.tagName] = fd
                 if fd.isCollection():
                     cd.collectionFieldDescriptors[fd.collection_tag_name] = fd        
@@ -160,45 +176,42 @@ class SimplTypesScope(object):
             cd = self.classDescriptors[cd_key];
             if (cd.name == name):
                 return cd.tagName
-
+        raise ClassNotDefined("Class " + name + " not defined in the SimplTypesScope")
+    
     def getFileDescriptorFromTag(self, tag, rootTag):
         class_descriptor = self.classDescriptors[rootTag]
         if tag in class_descriptor.collectionFieldDescriptors:
             return class_descriptor.collectionFieldDescriptors[tag]
         return class_descriptor.fieldDescriptors[tag]
 
-
     def initializeFromXML(self, serializedScope):
         pass
-
 
     def serialize(self, obj, serialization_format):
         if serialization_format == Format.XML:
             xmlserializer = XmlSimplSerializer(obj, self)
             return xmlserializer.serialize()
-        if serialization_format == Format.JSON:
+        elif serialization_format == Format.JSON:
             serializer = JSONSimplSerializer(obj, self)
             return serializer.serialize()
-
+        else:
+            raise UnknownFormat("Unknown format provided, only XML and JSON supported")
 
     def deserialize(self, input_file, serialization_format):
         if serialization_format == Format.XML:
             xml_deserializer = SimplXmlDeserializer(self, input_file)
             xml_deserializer.parse()
             return xml_deserializer.root
-
-        if serialization_format == Format.JSON:
+        elif serialization_format == Format.JSON:
             json_des = SimplJsonDeserializer(self,input_file)
             json_des.parse()
             return json_des.root
+        else:
+            raise UnknownFormat("Unknown format provided, only XML and JSON supported")
 
-    @classmethod
-    def enableGraphSerialization():
+    def enableGraphSerialization(self):
         self.graphSerialization = True
 
-if __name__ == '__main__':
-
-    scope = SimplTypesScope("JSON", "sample_typesscope")
-    #print(scope.classDescriptors)
-
-    #print(scope.simplIdToObject)
+    def createDynamicClasses(self):
+        for class_descriptor in self.classDescriptors:
+            createClass(class_descriptor.simpl_name)

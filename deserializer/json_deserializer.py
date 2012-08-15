@@ -4,9 +4,9 @@ Created on 09.06.2012
 @author: cristi
 '''
 import json
-from deserializer.deserializer_utils import *
+from utils.deserializer_utils import *
 from deserializer.pull_deserializer import PullDeserializer
-from ijson import items, parse
+from ijson import  parse
 
 from deserializer.field_type import FieldType
 

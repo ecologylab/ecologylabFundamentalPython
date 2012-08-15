@@ -11,6 +11,7 @@ def run_test(ClassType):
     unittest.TextTestRunner(verbosity=2).run(suite)
 
 if __name__ == '__main__':
+    #unittest.main()
     run_test(point.Point)
-    run_test(circle.Circle)
+    #run_test(circle.Circle)
     

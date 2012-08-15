@@ -25,9 +25,13 @@ def xml_compare(x1, x2, reporter=None):
     if x1.tag != x2.tag:
         return False
     for name, value in x1.attrib.items():
+        if name == "xmlns:simpl":
+            continue
         if x2.attrib.get(name) != value:
             return False
     for name in x2.attrib.keys():
+        if name == "xmlns:simpl":
+            continue
         if name not in x1.attrib:
             return False
     if not text_compare(x1.text, x2.text):

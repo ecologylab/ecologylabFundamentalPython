@@ -3,9 +3,7 @@ Created on 16.06.2012
 
 @author: cristi
 '''
-from xml.sax import ContentHandler, make_parser
-from serializer.xml_serializer import prettify, XmlSimplSerializer
-from deserializer.deserializer_utils import *
+from utils.deserializer_utils import *
 from deserializer.pull_deserializer import PullDeserializer
 
 from xml.dom import pulldom
