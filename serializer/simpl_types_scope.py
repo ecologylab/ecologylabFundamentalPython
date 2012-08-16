@@ -8,7 +8,7 @@ from deserializer.json_deserializer import *
 from serializer.class_descriptor import ClassDescriptor
 from serializer.field_descriptor import FieldDescriptor
 from utils.format import *
-from serializer.xml_serializer import XmlSimplSerializer
+from serializer.xml_serializer import *
 from serializer.json_serializer import *
 from deserializer.xml_deserializer import *
 from serializer import class_descriptor
@@ -44,7 +44,6 @@ class SimplTypesScope(object):
         self.resolveGraphReferences()
         
     def parseRoot(self, cd):
-        print(cd)
         if 'simpl.id' in cd:
             classDescriptor = ClassDescriptor()
             classDescriptor.name = cd['name']
@@ -178,6 +177,15 @@ class SimplTypesScope(object):
                 return cd.tagName
         raise ClassNotDefined("Class " + name + " not defined in the SimplTypesScope")
     
+    def findClassByName(self, name):
+        for cd_key in self.classDescriptors:
+            cd = self.classDescriptors[cd_key];
+            split_string = cd.name.split(".")
+            class_name = split_string[len(split_string) - 1]
+            if (class_name == name):
+                return cd.tagName
+        raise ClassNotDefined("Class " + name + " not defined in the SimplTypesScope")
+    
     def getFileDescriptorFromTag(self, tag, rootTag):
         class_descriptor = self.classDescriptors[rootTag]
         if tag in class_descriptor.collectionFieldDescriptors:
@@ -214,4 +222,19 @@ class SimplTypesScope(object):
 
     def createDynamicClasses(self):
         for class_descriptor in self.classDescriptors:
-            createClass(class_descriptor.simpl_name)
+            createClass(self.classDescriptors[class_descriptor].simpl_name)
+    
+    def SimplType(self, class_name):
+        self.createDynamicClasses()
+        new_instance = getClassInstance(class_name)
+        new_instance.simpl_tag_name = self.findClassByName(class_name)
+        return new_instance
+        
+    def printSerialized(self, obj, format):
+        element = self.serialize(obj, format)
+        if format == Format.XML:
+            print(prettify(element))
+        elif format == Format.JSON:
+            print (json.dumps(element))
+        else:
+            raise UnknownFormat("Unknown format provided, only XML and JSON supported")
