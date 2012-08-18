@@ -29,25 +29,28 @@ class JSONSimplSerializer:
                 if fd.simpl_type == "composite":
                     new_dict[str(fd.tagName)] = self.serializeInDepth(getattr(simpl_object, fd.name))
                 if fd.simpl_type == "collection":
-                    new_dict = self.serializeCollection(fd, new_dict)
+                    new_dict = self.serializeCollection(simpl_object, fd, new_dict)
         return new_dict
     
-    def serializeCollection(self, fd, new_dict):
+    def serializeCollection(self,simpl_object, fd, new_dict):
         collection_dict = dict()
         collection_dict[fd.collection_tag_name] = []
-        children = getattr(self.simpl_object, fd.name)
+        children = getattr(simpl_object, fd.name)
         for child in children:
             if fd.getType() == FieldType.COLLECTION_ELEMENT:
-                collection_dict[fd.collection_tag_name].append(self.serializeInDepth(child))
+                if fd.isPolymorphicCollection():
+                    child_dict = {}
+                    child_dict[child.simpl_tag_name] = self.serializeInDepth(child)
+                    collection_dict[fd.collection_tag_name].append(child_dict)
+                else:
+                    collection_dict[fd.collection_tag_name].append(self.serializeInDepth(child))
             if fd.getType() == FieldType.COLLECTION_SCALAR:
                 collection_dict[fd.collection_tag_name].append(str(child))
             if fd.getType() == FieldType.MAP_ELEMENT:
                 aux = self.serializeInDepth(children[child])
-                child_dict[fd.map_key] = aux[fd.map_key]
-                child_dict[fd.collection_tag_name] = aux
-                
-                
-        if fd.isWrappedCollection():
+                collection_dict[fd.collection_tag_name].append(aux)
+                       
+        if fd.isWrappedCollection() and not fd.isPolymorphicCollection():
             new_dict[fd.tagName] = collection_dict
         else:
             new_dict[fd.collection_tag_name] = collection_dict[fd.collection_tag_name]

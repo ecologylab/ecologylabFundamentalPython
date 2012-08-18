@@ -32,29 +32,22 @@ class mapsWithinMaps(unittest.TestCase):
         self.scope = SimplTypesScope(Format.JSON, "mapsWithinMaps_scope")
         fileReader = open("mapsWithinMaps.xml", "r")
         self.pointXMLResult = fileReader.read()
-        fileReader.close()
-                
+        fileReader.close()                
     def test_xml_run(self):
         simpl_object = self.scope.deserialize("mapsWithinMaps.xml", Format.XML)
-        if False:
-            xmlelement = self.scope.serialize(simpl_object, Format.XML)
-            print(prettify(xmlelement))
-            
-            expected_result = self.pointXMLResult
-            print(expected_result)
-            
-            self.assertTrue(testing_utils.xml_compare(xmlelement, ElementTree.fromstring(expected_result)))
+        xmlelement = self.scope.serialize(simpl_object, Format.XML)
+        print(prettify(xmlelement))            
+        expected_result = self.pointXMLResult
+        print(expected_result)
+        self.assertTrue(xmlelement, ElementTree.fromstring(expected_result))
 
     def test_json_run(self):
         simpl_object = self.scope.deserialize("mapsWithinMaps.json", Format.JSON)
-        if False:
-            json_text = deserialize_from_file("mapsWithinMaps.json")
-            print(json_text)
-    
-            json_element = self.scope.serialize(simpl_object, Format.JSON)
-            
-            print (json.dumps(json_element))
-            self.assertTrue(json_text, json.dumps(json_element))
+        json_text = deserialize_from_file("mapsWithinMaps.json")
+        print(json_text)
+        json_element = self.scope.serialize(simpl_object, Format.JSON)
+        print (json.dumps(json_element))
+        self.assertTrue(json_text, json.dumps(json_element))
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

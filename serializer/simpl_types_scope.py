@@ -223,11 +223,20 @@ class SimplTypesScope(object):
     def createDynamicClasses(self):
         for class_descriptor in self.classDescriptors:
             createClass(self.classDescriptors[class_descriptor].simpl_name)
+                
     
     def SimplType(self, class_name):
         self.createDynamicClasses()
         new_instance = getClassInstance(class_name)
         new_instance.simpl_tag_name = self.findClassByName(class_name)
+        class_descriptor = self.classDescriptors[new_instance.simpl_tag_name]
+        for fd_key in class_descriptor.collectionFieldDescriptors:
+            fd = class_descriptor.collectionFieldDescriptors[fd_key]
+            if fd.getType() == FieldType.MAP_ELEMENT or fd.getType() == FieldType.MAP_SCALAR:
+                setattr(new_instance, fd.name, {})
+            elif fd.getType() == FieldType.COLLECTION_ELEMENT or fd.getType() == FieldType.COLLECTION_SCALAR:
+                setattr(new_instance, fd.name, [])
+                
         return new_instance
         
     def printSerialized(self, obj, format):

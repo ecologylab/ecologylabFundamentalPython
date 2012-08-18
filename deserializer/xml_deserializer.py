@@ -129,7 +129,6 @@ class SimplXmlDeserializer(PullDeserializer):
                 else:
                     fd = class_descriptor.fieldDescriptors[key];
                     if fd.isScalarTag():
-                        print("just set attr " + fd.name + ", with the value " + value)
                         setattr(root, fd.name, fd.getValue(value))   
         return root
     

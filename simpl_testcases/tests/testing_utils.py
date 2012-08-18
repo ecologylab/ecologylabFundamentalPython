@@ -21,7 +21,7 @@ def text_compare(t1, t2):
         return True
     return (t1 or '').strip() == (t2 or '').strip()
 
-def xml_compare(x1, x2, reporter=None):
+def xml_compare(x1, x2):
     if x1.tag != x2.tag:
         return False
     for name, value in x1.attrib.items():

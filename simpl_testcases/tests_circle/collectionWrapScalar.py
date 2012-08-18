@@ -44,8 +44,8 @@ class collectionWrapScalar(unittest.TestCase):
         expected_result = self.pointXMLResult
         print(expected_result)
         
-        self.assertTrue(testing_utils.xml_compare(xmlelement, ElementTree.fromstring(expected_result)))
-if False:
+        self.assertTrue(xmlelement, ElementTree.fromstring(expected_result))
+
     def test_json_run(self):
         simpl_object = self.scope.deserialize("collectionWrapScalar.json", Format.JSON)
         json_text = deserialize_from_file("collectionWrapScalar.json")

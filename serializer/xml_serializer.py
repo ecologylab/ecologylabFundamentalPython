@@ -46,22 +46,27 @@ class XmlSimplSerializer:
                 elif fd.simpl_type == "composite":
                     xml_element.append(self.serializeInDepth(getattr(simpl_object, fd.name), fd.name))
                 elif fd.simpl_type == "collection":
-                    xml_element = self.serializeCollection(fd, xml_element)
+                    xml_element = self.serializeCollection(simpl_object, fd, xml_element)
         return xml_element
     
-    def serializeCollection(self, fd, xml_element):
-        if fd.isWrappedCollection():
+    def serializeCollection(self, simpl_object, fd, xml_element):
+        if fd.isWrappedCollection() or fd.isPolymorphicCollection():
             new_elem = Element(fd.tagName)
         else:
             new_elem = xml_element
-        if hasattr(self.simpl_object, fd.name):
-            collection_list = getattr(self.simpl_object, fd.name)
+        if hasattr(simpl_object, fd.name):
+            collection_list = getattr(simpl_object, fd.name)
             for item in collection_list:
                 if fd.getType() == FieldType.COLLECTION_ELEMENT:
-                    new_elem.append(self.serializeInDepth(item, fd.collection_tag_name))
+                    if fd.isPolymorphicCollection():
+                        new_elem.append(self.serializeInDepth(item, item.simpl_tag_name))
+                    else:
+                        new_elem.append(self.serializeInDepth(item, fd.collection_tag_name))
                 if fd.getType() == FieldType.COLLECTION_SCALAR:
                     new_elem.append(self.newStringElement(fd.collection_tag_name, str(item)))
-        if fd.isWrappedCollection():
+                if fd.getType() == FieldType.MAP_ELEMENT:
+                    new_elem.append(self.serializeInDepth(collection_list[item], fd.collection_tag_name))
+        if fd.isWrappedCollection() or fd.isPolymorphicCollection():
             xml_element.append(new_elem)
         return xml_element
         
