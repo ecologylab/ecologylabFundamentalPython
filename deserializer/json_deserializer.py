@@ -129,7 +129,7 @@ class SimplJsonDeserializer(PullDeserializer):
         tag = self.getTagName()
         class_name = self.scope.findClassByFullName(field_descriptor.element_class)
         subRoot = self.getObjectModel(class_name, tag)
-        setattr(parent, tag, subRoot)
+        setattr(parent, field_descriptor.name, subRoot)
         self.nextEvent()
     
     def deserializeCompositeMap(self, parent, fd):

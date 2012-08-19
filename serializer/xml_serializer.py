@@ -7,6 +7,7 @@ from xml.etree.ElementTree import Element, tostring
 from serializer import class_descriptor
 from xml.dom import minidom
 from deserializer.field_type import FieldType
+from utils.general_utils import *
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
@@ -20,16 +21,19 @@ class XmlSimplSerializer:
         self.simpl_object = simpl_object
         self.scope = simpl_types_scope
         self.top = None
-    
+        self.serializedObjects = {}
+        
     def serialize(self):
         self.top = self.serializeInDepth(self.simpl_object, self.simpl_object.simpl_tag_name)
+        self.top.set("xmlns:simpl", "http://ecologylab.net/research/simplGuide/serialization/index.html")
         return self.top
 
     def serializeInDepth(self, simpl_object, simpl_name):
         tag_name = simpl_object.simpl_tag_name
         xml_element = Element(simpl_name)
         class_descriptor = self.scope.classDescriptors[tag_name]
-        
+        if self.handleGraphSerialization(simpl_object, xml_element):
+            return xml_element
         for fd_key in class_descriptor.fieldDescriptors:
             fd = class_descriptor.fieldDescriptors[fd_key]
             if hasattr(simpl_object, fd.name):
@@ -44,7 +48,7 @@ class XmlSimplSerializer:
                     else:
                         xml_element.set(fd.tagName, str(getattr(simpl_object, fd.name)))
                 elif fd.simpl_type == "composite":
-                    xml_element.append(self.serializeInDepth(getattr(simpl_object, fd.name), fd.name))
+                    xml_element.append(self.serializeInDepth(getattr(simpl_object, fd.name), fd.tagName))
                 elif fd.simpl_type == "collection":
                     xml_element = self.serializeCollection(simpl_object, fd, xml_element)
         return xml_element
@@ -75,5 +79,21 @@ class XmlSimplSerializer:
         new_elem.text = content
         return new_elem
     
+    def handleGraphSerialization(self, simpl_object, xml_element):
+        if (self.isGraphSerialization()):
+            simpl_id = getObjectSimplId(simpl_object)
+            if (simpl_id in self.serializedObjects):
+                xml_element.set("simpl:ref", str(simpl_id))
+                self.serializedObjects[simpl_id].set("simpl:id", str(simpl_id))
+                return True
+            else:
+                self.serializedObjects[simpl_id] = xml_element
+                return False
+        else:
+            return False
+    
     def toString(self):
         return tostring(self.top)
+    
+    def isGraphSerialization(self):
+        return self.scope.graphSerialization == True

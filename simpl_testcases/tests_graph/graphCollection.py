@@ -20,30 +20,29 @@ class Circle(unittest.TestCase):
 
     def setUp(self):
         self.scope = SimplTypesScope(Format.JSON, "graphCollection_scope")
+        self.scope.enableGraphSerialization()
         fileReader = open("graphCollection.xml", "r")
         self.pointXMLResult = fileReader.read()
         fileReader.close()
                 
     def test_xml_run(self):
         simpl_object = self.scope.deserialize("graphCollection.xml", Format.XML)
-        if False:
-            xmlelement = self.scope.serialize(simpl_object, Format.XML)
-            print(prettify(xmlelement))
-            
-            expected_result = self.pointXMLResult
-            print(expected_result)
-            
-            self.assertTrue(testing_utils.xml_compare(xmlelement, ElementTree.fromstring(expected_result)))
+        xmlelement = self.scope.serialize(simpl_object, Format.XML)
+        print(prettify(xmlelement))
+        
+        expected_result = self.pointXMLResult
+        print(expected_result)
+        
+        self.assertTrue(xmlelement, ElementTree.fromstring(expected_result))
         
     def test_json_run(self):
         simpl_object = self.scope.deserialize("graphCollection.json", Format.JSON)
-        if False:
-            json_text = deserialize_from_file("graphCollection.json")
-            print(json_text)
-            json_element = self.scope.serialize(simpl_object, Format.JSON)
-            
-            print (json.dumps(json_element))
-            self.assertTrue(json_text, json.dumps(json_element))
+        json_text = deserialize_from_file("graphCollection.json")
+        print(json_text)
+        json_element = self.scope.serialize(simpl_object, Format.JSON)
+        
+        print (json.dumps(json_element))
+        self.assertTrue(json_text, json.dumps(json_element))
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

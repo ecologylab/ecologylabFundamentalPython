@@ -5,13 +5,15 @@ Created on 04.07.2012
 '''
 import json
 from deserializer.field_type import FieldType
+from utils.general_utils import *
 
 class JSONSimplSerializer:
     def __init__(self, simpl_object, simpl_types_scope):
         self.simpl_object = simpl_object
         self.scope = simpl_types_scope
         self.top = None
-    
+        self.serializedObjects = {}
+        
     def serialize(self):
         self.top = dict()
         self.top[self.simpl_object.simpl_tag_name] = self.serializeInDepth(self.simpl_object)
@@ -21,6 +23,8 @@ class JSONSimplSerializer:
         tag_name = simpl_object.simpl_tag_name
         class_descriptor = self.scope.classDescriptors[tag_name]
         new_dict = dict()
+        if self.handleGraphSerialization(simpl_object, new_dict):
+            return new_dict
         for fd_key in class_descriptor.fieldDescriptors:
             fd = class_descriptor.fieldDescriptors[fd_key]
             if hasattr(simpl_object, fd.name):
@@ -56,7 +60,22 @@ class JSONSimplSerializer:
             new_dict[fd.collection_tag_name] = collection_dict[fd.collection_tag_name]
         return new_dict
     
+    def handleGraphSerialization(self, simpl_object, json_element):
+        if (self.isGraphSerialization()):
+            simpl_id = getObjectSimplId(simpl_object)
+            if (simpl_id in self.serializedObjects):
+                json_element["simpl:ref"] = simpl_id
+                self.serializedObjects[simpl_id]["simpl:id"] = simpl_id
+                return True
+            else:
+                self.serializedObjects[simpl_id] = json_element
+                return False
+        else:
+            return False
+        
     def toString(self):
         return json.dumps(self.top)
     
+    def isGraphSerialization(self):
+        return self.scope.graphSerialization == True
     
