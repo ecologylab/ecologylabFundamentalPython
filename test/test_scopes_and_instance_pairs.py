@@ -6,7 +6,7 @@ Created on Dec 6, 2012
 import unittest
 from serializer.simpl_types_scope import SimplTypesScope
 from serializer.xml_serializer import prettify
-from simpl_testcases.tests import testing_utils
+from test import testing_utils
 from xml.etree import ElementTree
 from utils.format import Format
 import json
