@@ -29,9 +29,12 @@ class SimplXmlDeserializer(PullDeserializer):
     
     exp: scope.deserialize("input.xml", "XML")
     '''
+    @staticmethod
+    def get_parser(readable):
+        return pulldom.parse(readable)
     
-    def __init__(self, scope, input_file, deserializationHookStrategy = None):
-        super(SimplXmlDeserializer, self).__init__(scope, input_file)
+    def __init__(self, scope, readable, deserializationHookStrategy = None):
+        super(SimplXmlDeserializer, self).__init__(scope)
         self.scope = scope
         self.root = None
         self.is_collection_member = None
@@ -45,7 +48,7 @@ class SimplXmlDeserializer(PullDeserializer):
         self.deserializedSimplIds = {}
         self.deserializationHookStrategy = deserializationHookStrategy
         try:
-            self.pull_events = get_parser_from_file(input_file)
+            self.pull_events = self.get_parser(readable)
         except IOError as e:
             print ("Cannot read from file: " + e.strerror)
 

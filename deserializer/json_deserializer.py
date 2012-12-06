@@ -6,14 +6,15 @@ Created on 09.06.2012
 import json
 from utils.deserializer_utils import *
 from deserializer.pull_deserializer import PullDeserializer
-from ijson import  parse
+from ijson import parse
 
 from deserializer.field_type import FieldType
 
-def deserialize_from_string(data_string):
+def deserialize_from_string(data_string):#maybe rename deserialize typescope??  Feels wrong here
     deserialized_obj = json.loads(data_string)
     return deserialized_obj
 
+##I really want to get rid of this -rhema"
 def deserialize_from_file(filename):
     json_file = open(filename, "r")
     data_string = json_file.read()
@@ -40,9 +41,12 @@ class SimplJsonDeserializer(PullDeserializer):
     
     exp: scope.deserialize("input.json", "JSON")
     '''
+    @staticmethod
+    def get_parser(readable):
+        return iter(parse(readable))
     
-    def __init__(self, scope, input_file, deserializationHookStrategy = None):
-        super(SimplJsonDeserializer, self).__init__(scope, input_file)
+    def __init__(self, scope, readable, deserializationHookStrategy = None):
+        super(SimplJsonDeserializer, self).__init__(scope)#, input_file)
         self.scope = scope
         self.root = None
         self.current_collection = None
@@ -54,7 +58,7 @@ class SimplJsonDeserializer(PullDeserializer):
         self.deserializedSimplIds = {}
         self.deserializationHookStrategy = deserializationHookStrategy
         try:
-            self.pull_events = deserialize_events_from_file(input_file)
+            self.pull_events = self.get_parser(readable)
         except IOError as e:
             print ("Cannot read from file: " + e.strerror)
 

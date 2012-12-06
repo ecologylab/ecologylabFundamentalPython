@@ -29,7 +29,7 @@ class SimplTypesScope(object):
             self.initializeFromJSON(data_string)
         if format == Format.XML:
             self.initializeFromXML(data_string)
-        self.graphSerialization = False;
+        self.graphSerialization = True#Set true by default
         
     def initializeFromJSON(self, serializedScope):
         jsonScope = deserialize_from_string(serializedScope)
@@ -214,11 +214,24 @@ class SimplTypesScope(object):
             json_des = SimplJsonDeserializer(self,input_file)
             json_des.parse()
             return json_des.root
+
+    def deserialize_file(self, input_file, serialization_format):
+        if serialization_format == Format.XML:
+            xml_deserializer = SimplXmlDeserializer(self, open(input_file))
+            xml_deserializer.parse()
+            return xml_deserializer.root
+        elif serialization_format == Format.JSON:
+            json_des = SimplJsonDeserializer(self,open(input_file))
+            json_des.parse()
+            return json_des.root
         else:
             raise UnknownFormat("Unknown format provided, only XML and JSON supported")
 
     def enableGraphSerialization(self):
         self.graphSerialization = True
+        
+    def disableGraphSerialization(self):
+        self.graphSerialization = False
 
     def createDynamicClasses(self):
         for class_descriptor in self.classDescriptors:

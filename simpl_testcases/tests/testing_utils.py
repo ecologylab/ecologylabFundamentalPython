@@ -11,7 +11,7 @@ def getSerialization(obj, scope, serializationFormat):
 
 def getDeserialization(obj, scope, serializationFormat):
     serializedResult = getSerialization(obj, scope, serializationFormat);
-    output = scope.deserialize(serializedResult, serializationFormat)
+    output = scope.deserialize_file(serializedResult, serializationFormat)
     return getSerialization(output, scope, "XML")
 
 def text_compare(t1, t2):
