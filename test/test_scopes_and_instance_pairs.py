@@ -5,11 +5,7 @@ Created on Dec 6, 2012
 '''
 import unittest
 from serializer.simpl_types_scope import SimplTypesScope
-from serializer.xml_serializer import prettify
-from test import testing_utils
-from xml.etree import ElementTree
 from utils.format import Format
-import json
 import os
 
 scopes_and_instances_location = "test_scopes_and_instances/"
